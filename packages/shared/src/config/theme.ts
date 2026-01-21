@@ -5,8 +5,8 @@
  * Light mode is default, with optional dark mode overrides.
  *
  * Storage locations:
- * - App override:   ~/.craft-agent/theme.json
- * - Preset themes:  ~/.craft-agent/themes/*.json
+ * - App override:   ~/.claude-code-desktop/theme.json
+ * - Preset themes:  ~/.claude-code-desktop/themes/*.json
  */
 
 /**

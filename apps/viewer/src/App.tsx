@@ -9,21 +9,21 @@
  * - /s/{id} - View shared session
  */
 
-import { useState, useCallback, useEffect, useMemo } from 'react'
-import type { StoredSession } from '@craft-agent/core'
+import type { StoredSession } from '@claude-code-desktop/core'
 import {
-  SessionViewer,
-  GenericOverlay,
-  CodePreviewOverlay,
-  DiffPreviewOverlay,
-  TerminalPreviewOverlay,
-  extractOverlayData,
-  type PlatformActions,
-  type ActivityItem,
-  type OverlayData,
-} from '@craft-agent/ui'
-import { SessionUpload } from './components/SessionUpload'
+    CodePreviewOverlay,
+    DiffPreviewOverlay,
+    GenericOverlay,
+    SessionViewer,
+    TerminalPreviewOverlay,
+    extractOverlayData,
+    type ActivityItem,
+    type OverlayData,
+    type PlatformActions,
+} from '@claude-code-desktop/ui'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Header } from './components/Header'
+import { SessionUpload } from './components/SessionUpload'
 
 /** Default session ID for development */
 const DEV_SESSION_ID = 'tz5-13I84pwK_he'

@@ -6,9 +6,9 @@
  * handles all common use cases.
  */
 
-import { describe, it, expect } from 'bun:test'
+import type { Message } from '@claude-code-desktop/core'
+import { describe, expect, it } from 'bun:test'
 import { deriveTurnPhase, groupMessagesByTurn, type AssistantTurn } from '../turn-utils'
-import type { Message } from '@craft-agent/core'
 
 // ============================================================================
 // Test Helpers

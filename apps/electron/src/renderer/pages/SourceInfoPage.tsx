@@ -5,28 +5,26 @@
  * documentation (guide.md), and metadata. View-only.
  */
 
-import * as React from 'react'
-import { useEffect, useState, useMemo, useCallback } from 'react'
-import { AlertCircle } from 'lucide-react'
-import { EditPopover, EditButton, getEditConfig } from '@/components/ui/EditPopover'
-import { SourceAvatar } from '@/components/ui/source-avatar'
 import { SourceMenu } from '@/components/app-shell/SourceMenu'
-import { cn } from '@/lib/utils'
-import { routes, navigate } from '@/lib/navigate'
-import { toast } from 'sonner'
 import {
-  Info_Page,
-  Info_Section,
-  Info_Table,
-  Info_Alert,
-  Info_Markdown,
-  PermissionsDataTable,
-  ToolsDataTable,
-  type PermissionRow,
-  type ToolRow,
+    Info_Alert,
+    Info_Markdown,
+    Info_Page,
+    Info_Section,
+    Info_Table,
+    PermissionsDataTable,
+    ToolsDataTable,
+    type PermissionRow,
+    type ToolRow,
 } from '@/components/info'
+import { EditButton, EditPopover, getEditConfig } from '@/components/ui/EditPopover'
+import { SourceAvatar } from '@/components/ui/source-avatar'
+import { navigate, routes } from '@/lib/navigate'
+import type { PermissionsConfigFile } from '@claude-code-desktop/shared/agent/modes'
+import { AlertCircle } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import type { LoadedSource, McpToolWithPermission } from '../../shared/types'
-import type { PermissionsConfigFile } from '@craft-agent/shared/agent/modes'
 
 interface SourceInfoPageProps {
   sourceSlug: string

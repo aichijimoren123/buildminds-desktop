@@ -5,12 +5,11 @@
  * Wraps shadcn DataTable with Info-page styling and toolbar controls.
  */
 
-import * as React from 'react'
-import type { ColumnDef } from '@tanstack/react-table'
-import { DataTable, SortableHeader } from '@/components/ui/data-table'
-import { Input } from '@/components/ui/input'
-import { Spinner } from '@craft-agent/ui'
+import { DataTable } from '@/components/ui/data-table'
 import { cn } from '@/lib/utils'
+import { Spinner } from '@claude-code-desktop/ui'
+import type { ColumnDef } from '@tanstack/react-table'
+import * as React from 'react'
 
 export interface Info_DataTableProps<TData, TValue> {
   /** TanStack Table column definitions */
@@ -145,3 +144,4 @@ export function Info_DataTable<TData, TValue>({
 // Re-export SortableHeader for convenience
 export { SortableHeader } from '@/components/ui/data-table'
 export type { ColumnDef } from '@tanstack/react-table'
+

@@ -1,56 +1,51 @@
 // Types shared between main and renderer processes
-// Core types are re-exported from @craft-agent/core
+// Core types are re-exported from @claude-code-desktop/core
 
 // Import and re-export core types
 import type {
-  Message as CoreMessage,
-  MessageRole as CoreMessageRole,
-  TypedError,
-  TokenUsage as CoreTokenUsage,
-  Workspace as CoreWorkspace,
-  SessionMetadata as CoreSessionMetadata,
-  StoredAttachment as CoreStoredAttachment,
-  ContentBadge,
-} from '@craft-agent/core/types';
+    ContentBadge,
+    Message as CoreMessage,
+    MessageRole as CoreMessageRole,
+    SessionMetadata as CoreSessionMetadata,
+    StoredAttachment as CoreStoredAttachment,
+    TokenUsage as CoreTokenUsage,
+    Workspace as CoreWorkspace,
+    TypedError,
+} from '@claude-code-desktop/core/types';
 
 // Import mode types from dedicated subpath export (avoids pulling in SDK)
-import type { PermissionMode } from '@craft-agent/shared/agent/modes';
+import type { PermissionMode } from '@claude-code-desktop/shared/agent/modes';
+export { PERMISSION_MODE_CONFIG } from '@claude-code-desktop/shared/agent/modes';
 export type { PermissionMode };
-export { PERMISSION_MODE_CONFIG } from '@craft-agent/shared/agent/modes';
 
 // Import thinking level types
-import type { ThinkingLevel } from '@craft-agent/shared/agent/thinking-levels';
+import type { ThinkingLevel } from '@claude-code-desktop/shared/agent/thinking-levels';
+export { DEFAULT_THINKING_LEVEL, THINKING_LEVELS } from '@claude-code-desktop/shared/agent/thinking-levels';
 export type { ThinkingLevel };
-export { THINKING_LEVELS, DEFAULT_THINKING_LEVEL } from '@craft-agent/shared/agent/thinking-levels';
 
 export type {
-  CoreMessage as Message,
-  CoreMessageRole as MessageRole,
-  TypedError,
-  CoreTokenUsage as TokenUsage,
-  CoreWorkspace as Workspace,
-  CoreSessionMetadata as SessionMetadata,
-  CoreStoredAttachment as StoredAttachment,
-  ContentBadge,
+    ContentBadge, CoreMessage as Message,
+    CoreMessageRole as MessageRole, CoreSessionMetadata as SessionMetadata,
+    CoreStoredAttachment as StoredAttachment, CoreTokenUsage as TokenUsage, TypedError, CoreWorkspace as Workspace
 };
 
 // Import and re-export auth types for onboarding
 // Use types-only subpaths to avoid pulling in Node.js dependencies
-import type { AuthState, SetupNeeds } from '@craft-agent/shared/auth/types';
-import type { AuthType } from '@craft-agent/shared/config/types';
-export type { AuthState, SetupNeeds, AuthType };
+    import type { AuthState, SetupNeeds } from '@claude-code-desktop/shared/auth/types';
+    import type { AuthType } from '@claude-code-desktop/shared/config/types';
+export type { AuthState, AuthType, SetupNeeds };
 
 // Import and re-export provider types
-import type { ProviderType } from '@claude-code-desktop/core';
-export type { ProviderType };
+    import type { ProviderType } from '@claude-code-desktop/core';
 export { PROVIDER_CONFIGS } from '@claude-code-desktop/core';
+export type { ProviderType };
 
 // Import source types for session source selection
-import type { LoadedSource, FolderSourceConfig, SourceConnectionStatus } from '@craft-agent/shared/sources/types';
-export type { LoadedSource, FolderSourceConfig, SourceConnectionStatus };
+import type { FolderSourceConfig, LoadedSource, SourceConnectionStatus } from '@claude-code-desktop/shared/sources/types';
+export type { FolderSourceConfig, LoadedSource, SourceConnectionStatus };
 
 // Import skill types
-import type { LoadedSkill, SkillMetadata } from '@craft-agent/shared/skills/types';
+    import type { LoadedSkill, SkillMetadata } from '@claude-code-desktop/shared/skills/types';
 export type { LoadedSkill, SkillMetadata };
 
 
@@ -77,12 +72,12 @@ export interface SessionFile {
 }
 
 // Import auth request types for unified auth flow
-import type { AuthRequest as SharedAuthRequest, CredentialInputMode as SharedCredentialInputMode, CredentialAuthRequest as SharedCredentialAuthRequest } from '@craft-agent/shared/agent';
-export type { SharedAuthRequest as AuthRequest };
-export type { SharedCredentialInputMode as CredentialInputMode };
+import type { PermissionRequest as BasePermissionRequest } from '@claude-code-desktop/core/types';
+import type { AuthRequest as SharedAuthRequest, CredentialAuthRequest as SharedCredentialAuthRequest, CredentialInputMode as SharedCredentialInputMode } from '@claude-code-desktop/shared/agent';
+export type { SharedAuthRequest as AuthRequest, SharedCredentialInputMode as CredentialInputMode };
 // CredentialRequest is used by UI components for displaying credential input
 export type CredentialRequest = SharedCredentialAuthRequest;
-export { generateMessageId } from '@craft-agent/core/types';
+export { generateMessageId } from '@claude-code-desktop/core/types';
 
 /**
  * OAuth result from main process
@@ -139,8 +134,7 @@ export interface RefreshTitleResult {
 
 
 // Re-export permission types from core, extended with sessionId for multi-session context
-export type { PermissionRequest as BasePermissionRequest } from '@craft-agent/core/types';
-import type { PermissionRequest as BasePermissionRequest } from '@craft-agent/core/types';
+export type { PermissionRequest as BasePermissionRequest } from '@claude-code-desktop/core/types';
 
 /**
  * Permission request with session context (for multi-session Electron app)
@@ -153,7 +147,7 @@ export interface PermissionRequest extends BasePermissionRequest {
 // Credential Input Types (Secure Auth UI)
 // ============================================
 
-// CredentialInputMode is imported from @craft-agent/shared/agent above
+// CredentialInputMode is imported from @claude-code-desktop/shared/agent above
 
 /**
  * Credential response from user (for credential auth requests)
@@ -228,7 +222,7 @@ export interface FileAttachment {
 }
 
 // Import types needed for Session interface
-import type { Message } from '@craft-agent/core/types';
+import type { Message } from '@claude-code-desktop/core/types';
 
 /**
  * Electron-specific Session type (includes runtime state)
@@ -384,7 +378,7 @@ export interface SendMessageOptions {
   /** Skill slugs to activate for this message (from @mentions) */
   skillSlugs?: string[]
   /** Content badges for inline display (sources, skills with embedded icons) */
-  badges?: import('@craft-agent/core').ContentBadge[]
+  badges?: import('@claude-code-desktop/core').ContentBadge[]
 }
 
 // =============================================================================
@@ -576,7 +570,7 @@ export const IPC_CHANNELS = {
   SOURCES_GET_PERMISSIONS: 'sources:getPermissions',
   // Workspace permissions config (for Explore mode)
   WORKSPACE_GET_PERMISSIONS: 'workspace:getPermissions',
-  // Default permissions from ~/.craft-agent/permissions/default.json
+  // Default permissions from ~/.claude-code-desktop/permissions/default.json
   DEFAULT_PERMISSIONS_GET: 'permissions:getDefaults',
   // Broadcast when default permissions change (file watcher)
   DEFAULT_PERMISSIONS_CHANGED: 'permissions:defaultsChanged',
@@ -633,7 +627,7 @@ export const IPC_CHANNELS = {
 } as const
 
 // Re-import types for ElectronAPI
-import type { Workspace, SessionMetadata, StoredAttachment as StoredAttachmentType } from '@craft-agent/core/types';
+import type { StoredAttachment as StoredAttachmentType, Workspace } from '@claude-code-desktop/core/types';
 
 // Type-safe IPC API exposed to renderer
 export interface ElectronAPI {
@@ -788,9 +782,9 @@ export interface ElectronAPI {
   deleteSource(workspaceId: string, sourceSlug: string): Promise<void>
   startSourceOAuth(workspaceId: string, sourceSlug: string): Promise<{ success: boolean; error?: string; accessToken?: string }>
   saveSourceCredentials(workspaceId: string, sourceSlug: string, credential: string): Promise<void>
-  getSourcePermissionsConfig(workspaceId: string, sourceSlug: string): Promise<import('@craft-agent/shared/agent').PermissionsConfigFile | null>
-  getWorkspacePermissionsConfig(workspaceId: string): Promise<import('@craft-agent/shared/agent').PermissionsConfigFile | null>
-  getDefaultPermissionsConfig(): Promise<{ config: import('@craft-agent/shared/agent').PermissionsConfigFile | null; path: string }>
+  getSourcePermissionsConfig(workspaceId: string, sourceSlug: string): Promise<import('@claude-code-desktop/shared/agent').PermissionsConfigFile | null>
+  getWorkspacePermissionsConfig(workspaceId: string): Promise<import('@claude-code-desktop/shared/agent').PermissionsConfigFile | null>
+  getDefaultPermissionsConfig(): Promise<{ config: import('@claude-code-desktop/shared/agent').PermissionsConfigFile | null; path: string }>
   getMcpTools(workspaceId: string, sourceSlug: string): Promise<McpToolsResult>
 
   // Sources change listener (live updates when sources are added/removed)
@@ -810,7 +804,7 @@ export interface ElectronAPI {
   onSkillsChanged(callback: (skills: LoadedSkill[]) => void): () => void
 
   // Statuses (workspace-scoped)
-  listStatuses(workspaceId: string): Promise<import('@craft-agent/shared/statuses').StatusConfig[]>
+  listStatuses(workspaceId: string): Promise<import('@claude-code-desktop/shared/statuses').StatusConfig[]>
   // Statuses change listener (live updates when statuses config or icon files change)
   onStatusesChanged(callback: (workspaceId: string) => void): () => void
 

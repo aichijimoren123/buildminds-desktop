@@ -10,53 +10,52 @@
  * - Billing (API Key, Claude Max)
  */
 
-import * as React from 'react'
-import { useState, useEffect, useCallback } from 'react'
 import { PanelHeader } from '@/components/app-shell/PanelHeader'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { HeaderMenu } from '@/components/ui/HeaderMenu'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useTheme } from '@/context/ThemeContext'
-import { cn } from '@/lib/utils'
 import { routes } from '@/lib/navigate'
-import {
-  Monitor,
-  Sun,
-  Moon,
-  Eye,
-  EyeOff,
-  Check,
-  ExternalLink,
-  CheckCircle2,
-  Plug,
-  XCircle,
-} from 'lucide-react'
-import { Spinner } from '@craft-agent/ui'
-import type { AuthType } from '../../../shared/types'
 import type { DetailsPageMeta } from '@/lib/navigation-registry'
+import { cn } from '@/lib/utils'
 import { type ProviderType, PROVIDER_CONFIGS } from '@claude-code-desktop/core'
+import { Spinner } from '@claude-code-desktop/ui'
+import {
+    Check,
+    CheckCircle2,
+    ExternalLink,
+    Eye,
+    EyeOff,
+    Monitor,
+    Moon,
+    Plug,
+    Sun,
+    XCircle,
+} from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import type { AuthType } from '../../../shared/types'
 
 import {
-  SettingsSection,
-  SettingsCard,
-  SettingsRow,
-  SettingsToggle,
-  SettingsSegmentedControl,
-  SettingsMenuSelectRow,
-  SettingsMenuSelect,
+    SettingsCard,
+    SettingsMenuSelect,
+    SettingsMenuSelectRow,
+    SettingsRow,
+    SettingsSection,
+    SettingsSegmentedControl,
+    SettingsToggle,
 } from '@/components/settings'
-import { useUpdateChecker } from '@/hooks/useUpdateChecker'
-import { useAppShellContext } from '@/context/AppShellContext'
-import type { PresetTheme } from '@config/theme'
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog'
+import { useAppShellContext } from '@/context/AppShellContext'
+import { useUpdateChecker } from '@/hooks/useUpdateChecker'
+import type { PresetTheme } from '@config/theme'
 
 export const meta: DetailsPageMeta = {
   navigator: 'settings',

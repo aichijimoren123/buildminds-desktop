@@ -1,15 +1,11 @@
-import { CraftAgent, type CraftAgentConfig, type PermissionMode, type SdkMcpServerConfig } from '../agent/craft-agent.ts';
-import { createApiServer } from '../sources/api-tools.ts';
-import { listSessions, getOrCreateSessionById, updateSessionSdkId } from '../sessions/storage.ts';
+import { CraftAgent, type CraftAgentConfig, type PermissionMode } from '../agent/claude-code-desktop.ts';
+import { getOrCreateSessionById, listSessions, updateSessionSdkId } from '../sessions/storage.ts';
 import { debug } from '../utils/debug.ts';
-import { DEFAULT_MODEL } from '../config/models.ts';
-import { getCredentialManager } from '../credentials/index.ts';
-import type { CredentialId, CredentialType } from '../credentials/types.ts';
 import type {
-  HeadlessConfig,
-  HeadlessResult,
-  HeadlessEvent,
-  ToolCallRecord,
+    HeadlessConfig,
+    HeadlessEvent,
+    HeadlessResult,
+    ToolCallRecord,
 } from './types.ts';
 
 /**

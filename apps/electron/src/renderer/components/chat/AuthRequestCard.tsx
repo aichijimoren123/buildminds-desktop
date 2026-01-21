@@ -1,13 +1,13 @@
-import * as React from 'react'
-import { useState, useCallback } from 'react'
-import { Key, User, Lock, Eye, EyeOff, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react'
-import { Spinner } from '@craft-agent/ui'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import type { Message, CredentialResponse } from '../../../shared/types'
-import type { AuthRequestType, AuthStatus } from '@craft-agent/core/types'
+import type { AuthRequestType } from '@claude-code-desktop/core/types'
+import { Spinner } from '@claude-code-desktop/ui'
+import { CheckCircle2, Eye, EyeOff, Key, Lock, User, XCircle, type LucideIcon } from 'lucide-react'
+import * as React from 'react'
+import { useCallback, useState } from 'react'
+import type { CredentialResponse, Message } from '../../../shared/types'
 
 // ============================================================================
 // Primitives

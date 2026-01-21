@@ -11,9 +11,9 @@
  * - Pending/queued states (Electron only)
  */
 
-import type { ReactNode } from 'react'
-import type { StoredAttachment, ContentBadge } from '@craft-agent/core'
+import type { ContentBadge, StoredAttachment } from '@claude-code-desktop/core'
 import { FileText } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 import { Markdown } from '../markdown'
 import { FileTypeIcon, getFileTypeLabel } from './attachment-helpers'

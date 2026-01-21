@@ -1,10 +1,10 @@
-import * as React from 'react'
-import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { SlashCommandMenu, DEFAULT_SLASH_COMMAND_GROUPS, type SlashCommandId } from '@/components/ui/slash-command-menu'
+import { DEFAULT_SLASH_COMMAND_GROUPS, SlashCommandMenu, type SlashCommandId } from '@/components/ui/slash-command-menu'
+import { cn } from '@/lib/utils'
+import { PERMISSION_MODE_CONFIG, type PermissionMode } from '@claude-code-desktop/shared/agent/modes'
 import { ChevronDown, X } from 'lucide-react'
-import { PERMISSION_MODE_CONFIG, type PermissionMode } from '@craft-agent/shared/agent/modes'
-import { ActiveTasksBar, type BackgroundTask } from './ActiveTasksBar'
+import * as React from 'react'
+import { type BackgroundTask } from './ActiveTasksBar'
 
 // ============================================================================
 // Permission Mode Icon Component

@@ -10,28 +10,28 @@
  * - Advanced (Working directory, Local MCP servers)
  */
 
-import * as React from 'react'
-import { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
 import { PanelHeader } from '@/components/app-shell/PanelHeader'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { HeaderMenu } from '@/components/ui/HeaderMenu'
-import { useAppShellContext } from '@/context/AppShellContext'
-import { cn } from '@/lib/utils'
-import { routes } from '@/lib/navigate'
-import { Spinner } from '@craft-agent/ui'
 import { RenameDialog } from '@/components/ui/rename-dialog'
-import type { PermissionMode, ThinkingLevel, WorkspaceSettings } from '../../../shared/types'
-import { PERMISSION_MODE_CONFIG } from '@craft-agent/shared/agent/mode-types'
-import { DEFAULT_THINKING_LEVEL, THINKING_LEVELS } from '@craft-agent/shared/agent/thinking-levels'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { useAppShellContext } from '@/context/AppShellContext'
+import { routes } from '@/lib/navigate'
 import type { DetailsPageMeta } from '@/lib/navigation-registry'
+import { cn } from '@/lib/utils'
+import { PERMISSION_MODE_CONFIG } from '@claude-code-desktop/shared/agent/mode-types'
+import { DEFAULT_THINKING_LEVEL, THINKING_LEVELS } from '@claude-code-desktop/shared/agent/thinking-levels'
+import { Spinner } from '@claude-code-desktop/ui'
+import { AnimatePresence, motion } from 'motion/react'
+import * as React from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import type { PermissionMode, ThinkingLevel, WorkspaceSettings } from '../../../shared/types'
 
 import {
-  SettingsSection,
-  SettingsCard,
-  SettingsRow,
-  SettingsToggle,
-  SettingsMenuSelectRow,
+    SettingsCard,
+    SettingsMenuSelectRow,
+    SettingsRow,
+    SettingsSection,
+    SettingsToggle,
 } from '@/components/settings'
 
 export const meta: DetailsPageMeta = {

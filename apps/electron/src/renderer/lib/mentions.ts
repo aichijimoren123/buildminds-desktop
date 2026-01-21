@@ -8,10 +8,10 @@
  * Bracket syntax allows mentions anywhere in text without word boundaries.
  */
 
-import type { ContentBadge } from '@craft-agent/core'
 import type { MentionItemType } from '@/components/ui/mention-menu'
+import type { ContentBadge } from '@claude-code-desktop/core'
 import type { LoadedSkill, LoadedSource } from '../../shared/types'
-import { getSourceIconSync, getSkillIconSync } from './icon-cache'
+import { getSkillIconSync, getSourceIconSync } from './icon-cache'
 
 // ============================================================================
 // Types

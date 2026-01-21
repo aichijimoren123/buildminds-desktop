@@ -1,50 +1,48 @@
-import * as React from "react"
-import { useEffect, useState, useMemo, useCallback } from "react"
 import {
-  AlertTriangle,
-  CheckCircle2,
-  ChevronDown,
-  ChevronRight,
-  CircleAlert,
-  ExternalLink,
-  Info,
-  X,
+    AlertTriangle,
+    CheckCircle2,
+    ChevronDown,
+    ChevronRight,
+    CircleAlert,
+    ExternalLink,
+    Info
 } from "lucide-react"
-import { motion, AnimatePresence } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
+import * as React from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { cn } from "@/lib/utils"
-import { Markdown, CollapsibleMarkdownProvider, StreamingMarkdown, type RenderMode } from "@/components/markdown"
-import { AnimatedCollapsibleContent } from "@/components/ui/collapsible"
-import {
-  Spinner,
-  parseReadResult,
-  parseBashResult,
-  parseGrepResult,
-  parseGlobResult,
-  extractOverlayData,
-  CodePreviewOverlay,
-  DiffPreviewOverlay,
-  MultiDiffPreviewOverlay,
-  TerminalPreviewOverlay,
-  GenericOverlay,
-  JSONPreviewOverlay,
-  type ActivityItem,
-  type OverlayData,
-  type FileChange,
-} from "@craft-agent/ui"
-import { useFocusZone } from "@/hooks/keyboard"
-import { useTheme } from "@/hooks/useTheme"
-import type { Session, Message, FileAttachment, StoredAttachment, PermissionRequest, CredentialRequest, CredentialResponse, LoadedSource, LoadedSkill } from "../../../shared/types"
-import type { PermissionMode } from "@craft-agent/shared/agent/modes"
-import type { ThinkingLevel } from "@craft-agent/shared/agent/thinking-levels"
-import { TurnCard, UserMessageBubble, groupMessagesByTurn, formatTurnAsMarkdown, formatActivityAsMarkdown, type Turn, type AssistantTurn, type UserTurn, type SystemTurn, type AuthRequestTurn } from "@craft-agent/ui"
 import { MemoizedAuthRequestCard } from "@/components/chat/AuthRequestCard"
-import { ActiveOptionBadges } from "./ActiveOptionBadges"
-import { InputContainer, type StructuredInputState, type StructuredResponse, type PermissionResponse } from "./input"
+import { CollapsibleMarkdownProvider, Markdown, StreamingMarkdown, type RenderMode } from "@/components/markdown"
+import { AnimatedCollapsibleContent } from "@/components/ui/collapsible"
 import type { RichTextInputHandle } from "@/components/ui/rich-text-input"
-import { useBackgroundTasks } from "@/hooks/useBackgroundTasks"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { CHAT_LAYOUT } from "@/config/layout"
+import { useFocusZone } from "@/hooks/keyboard"
+import { useBackgroundTasks } from "@/hooks/useBackgroundTasks"
+import { useTheme } from "@/hooks/useTheme"
+import { formatElapsedTimer } from "@/lib/format-utils"
+import { cn } from "@/lib/utils"
+import type { PermissionMode } from "@claude-code-desktop/shared/agent/modes"
+import type { ThinkingLevel } from "@claude-code-desktop/shared/agent/thinking-levels"
+import {
+    CodePreviewOverlay,
+    DiffPreviewOverlay,
+    GenericOverlay,
+    JSONPreviewOverlay,
+    MultiDiffPreviewOverlay,
+    Spinner,
+    TerminalPreviewOverlay,
+    TurnCard, UserMessageBubble,
+    extractOverlayData,
+    formatTurnAsMarkdown,
+    groupMessagesByTurn,
+    type ActivityItem,
+    type FileChange,
+    type OverlayData
+} from "@claude-code-desktop/ui"
+import type { CredentialRequest, CredentialResponse, FileAttachment, LoadedSkill, LoadedSource, Message, PermissionRequest, Session } from "../../../shared/types"
+import { ActiveOptionBadges } from "./ActiveOptionBadges"
+import { InputContainer, type PermissionResponse, type StructuredInputState, type StructuredResponse } from "./input"
 
 // ============================================================================
 // Overlay State Types
@@ -193,16 +191,6 @@ const PROCESSING_MESSAGES = [
   'Rolling...',
 ]
 
-/**
- * Format elapsed time: "45s" under a minute, "1:02" for 1+ minutes
- */
-function formatElapsed(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-}
-
 interface ProcessingIndicatorProps {
   /** Start timestamp (persists across remounts) */
   startTime?: number
@@ -272,7 +260,7 @@ function ProcessingIndicator({ startTime, statusMessage }: ProcessingIndicatorPr
         </AnimatePresence>
         {elapsed >= 1 && (
           <span className="text-muted-foreground/60 ml-1">
-            {formatElapsed(elapsed)}
+            {formatElapsedTimer(elapsed)}
           </span>
         )}
       </span>
@@ -401,7 +389,7 @@ export function ChatDisplay({
   }, [])
 
   // Extract overlay data for activity-based overlays
-  // Uses the shared extractOverlayData parser from @craft-agent/ui
+  // Uses the shared extractOverlayData parser from @claude-code-desktop/ui
   const overlayData: OverlayData | null = useMemo(() => {
     if (!overlayState || overlayState.type !== 'activity') return null
     return extractOverlayData(overlayState.activity)

@@ -1,8 +1,8 @@
-import { Menu, app, shell, BrowserWindow } from 'electron'
+import { APP_NAME } from '@claude-code-desktop/shared/branding'
+import { BrowserWindow, Menu, app } from 'electron'
 import { IPC_CHANNELS } from '../shared/types'
-import type { WindowManager } from './window-manager'
 import { mainLog } from './logger'
-import { APP_NAME } from '@craft-agent/shared/branding'
+import type { WindowManager } from './window-manager'
 
 // Store reference for rebuilding menu
 let cachedWindowManager: WindowManager | null = null

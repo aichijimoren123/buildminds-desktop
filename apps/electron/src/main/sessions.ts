@@ -1,64 +1,48 @@
+import { AbortReason, CraftAgent, setExecutable, setInterceptorPath, setPathToClaudeCodeExecutable, setPermissionMode, unregisterSessionScopedToolCallbacks, type AgentEvent, type AuthRequest, type AuthResult, type CredentialAuthRequest, type PermissionMode } from '@claude-code-desktop/shared/agent'
+import { type ThinkingLevel } from '@claude-code-desktop/shared/agent/thinking-levels'
+import { getAuthState } from '@claude-code-desktop/shared/auth'
+import {
+    ConfigWatcher,
+    DEFAULT_MODEL,
+    getWorkspaceByNameOrId,
+    getWorkspaces,
+    loadConfigDefaults,
+    loadStoredConfig,
+    type ConfigWatcherCallbacks,
+    type Workspace,
+} from '@claude-code-desktop/shared/config'
+import { getCredentialManager } from '@claude-code-desktop/shared/credentials'
+import {
+    clearPendingPlanExecution as clearStoredPendingPlanExecution,
+    createSession as createStoredSession,
+    deleteSession as deleteStoredSession,
+    flagSession as flagStoredSession,
+    getSessionPath as getSessionStoragePath,
+    getPendingPlanExecution as getStoredPendingPlanExecution,
+    // Session persistence functions
+    listSessions as listStoredSessions,
+    loadSession as loadStoredSession,
+    markCompactionComplete as markStoredCompactionComplete,
+    sessionPersistenceQueue,
+    setPendingPlanExecution as setStoredPendingPlanExecution,
+    setSessionTodoState as setStoredSessionTodoState,
+    unflagSession as unflagStoredSession,
+    updateSessionMetadata,
+    type StoredMessage,
+    type StoredSession,
+    type TodoState
+} from '@claude-code-desktop/shared/sessions'
+import { getSourceCredentialManager, getSourcesBySlugs, getSourceServerBuilder, isApiOAuthProvider, loadWorkspaceSources, SERVER_BUILD_ERRORS, type LoadedSource, type SourceWithCredential } from '@claude-code-desktop/shared/sources'
+import { formatPathsToRelative, formatToolInputPaths, generateSessionTitle, perf, regenerateSessionTitle } from '@claude-code-desktop/shared/utils'
+import { loadWorkspaceConfig } from '@claude-code-desktop/shared/workspaces'
 import { app } from 'electron'
-import { join } from 'path'
 import { existsSync } from 'fs'
-import { rm, readFile } from 'fs/promises'
-import { CraftAgent, type AgentEvent, setPermissionMode, type PermissionMode, unregisterSessionScopedToolCallbacks, AbortReason, type AuthRequest, type AuthResult, type CredentialAuthRequest } from '@craft-agent/shared/agent'
-import { sessionLog, isDebugMode, getLogFilePath } from './logger'
-import { createSdkMcpServer } from '@anthropic-ai/claude-agent-sdk'
+import { readFile } from 'fs/promises'
+import { join } from 'path'
+import { sanitizeTextContent } from '../lib/sanitize'
+import { generateMessageId, IPC_CHANNELS, type FileAttachment, type Message, type SendMessageOptions, type Session, type SessionEvent, type StoredAttachment } from '../shared/types'
+import { getLogFilePath, isDebugMode, sessionLog } from './logger'
 import type { WindowManager } from './window-manager'
-import {
-  loadStoredConfig,
-  getWorkspaces,
-  getWorkspaceByNameOrId,
-  loadConfigDefaults,
-  type Workspace,
-} from '@craft-agent/shared/config'
-import { loadWorkspaceConfig } from '@craft-agent/shared/workspaces'
-import {
-  // Session persistence functions
-  listSessions as listStoredSessions,
-  loadSession as loadStoredSession,
-  saveSession as saveStoredSession,
-  createSession as createStoredSession,
-  deleteSession as deleteStoredSession,
-  flagSession as flagStoredSession,
-  unflagSession as unflagStoredSession,
-  setSessionTodoState as setStoredSessionTodoState,
-  updateSessionMetadata,
-  setPendingPlanExecution as setStoredPendingPlanExecution,
-  markCompactionComplete as markStoredCompactionComplete,
-  clearPendingPlanExecution as clearStoredPendingPlanExecution,
-  getPendingPlanExecution as getStoredPendingPlanExecution,
-  getSessionAttachmentsPath,
-  getSessionPath as getSessionStoragePath,
-  sessionPersistenceQueue,
-  type StoredSession,
-  type StoredMessage,
-  type SessionMetadata,
-  type TodoState,
-} from '@craft-agent/shared/sessions'
-import { loadWorkspaceSources, getSourcesBySlugs, type LoadedSource, type McpServerConfig, getSourcesNeedingAuth, getSourceCredentialManager, getSourceServerBuilder, type SourceWithCredential, isApiOAuthProvider, SERVER_BUILD_ERRORS } from '@craft-agent/shared/sources'
-import { ConfigWatcher, type ConfigWatcherCallbacks } from '@craft-agent/shared/config'
-import { getAuthState } from '@craft-agent/shared/auth'
-import { setAnthropicOptionsEnv, setPathToClaudeCodeExecutable, setInterceptorPath, setExecutable } from '@craft-agent/shared/agent'
-import { getCredentialManager } from '@craft-agent/shared/credentials'
-import { CraftMcpClient } from '@craft-agent/shared/mcp'
-import { type Session, type Message, type SessionEvent, type FileAttachment, type StoredAttachment, type SendMessageOptions, IPC_CHANNELS, generateMessageId } from '../shared/types'
-import { generateSessionTitle, regenerateSessionTitle, formatPathsToRelative, formatToolInputPaths, perf } from '@craft-agent/shared/utils'
-import { DEFAULT_MODEL } from '@craft-agent/shared/config'
-import { type ThinkingLevel, DEFAULT_THINKING_LEVEL } from '@craft-agent/shared/agent/thinking-levels'
-
-/**
- * Sanitize message content for use as session title.
- * Strips XML blocks (e.g. <edit_request>) and normalizes whitespace.
- */
-function sanitizeForTitle(content: string): string {
-  return content
-    .replace(/<edit_request>[\s\S]*?<\/edit_request>/g, '') // Strip entire edit_request blocks
-    .replace(/<[^>]+>/g, '')     // Strip remaining XML/HTML tags
-    .replace(/\s+/g, ' ')        // Collapse whitespace
-    .trim()
-}
 
 /**
  * Feature flags for agent behavior
@@ -395,7 +379,7 @@ export class SessionManager {
       onSkillChange: async (slug, skill) => {
         sessionLog.info(`Skill '${slug}' changed:`, skill ? 'updated' : 'deleted')
         // Broadcast updated list to UI
-        const { loadWorkspaceSkills } = await import('@craft-agent/shared/skills')
+        const { loadWorkspaceSkills } = await import('@claude-code-desktop/shared/skills')
         const skills = loadWorkspaceSkills(workspaceRootPath)
         this.broadcastSkillsChanged(skills)
       },
@@ -427,7 +411,7 @@ export class SessionManager {
   /**
    * Broadcast app theme changed event to all windows
    */
-  private broadcastAppThemeChanged(theme: import('@craft-agent/shared/config').ThemeOverrides | null): void {
+  private broadcastAppThemeChanged(theme: import('@claude-code-desktop/shared/config').ThemeOverrides | null): void {
     if (!this.windowManager) return
     sessionLog.info(`Broadcasting app theme changed`)
     this.windowManager.broadcastToAll(IPC_CHANNELS.THEME_APP_CHANGED, theme)
@@ -436,7 +420,7 @@ export class SessionManager {
   /**
    * Broadcast skills changed event to all windows
    */
-  private broadcastSkillsChanged(skills: import('@craft-agent/shared/skills').LoadedSkill[]): void {
+  private broadcastSkillsChanged(skills: import('@claude-code-desktop/shared/skills').LoadedSkill[]): void {
     if (!this.windowManager) return
     sessionLog.info(`Broadcasting skills changed (${skills.length} skills)`)
     this.windowManager.broadcastToAll(IPC_CHANNELS.SKILLS_CHANGED, skills)
@@ -444,7 +428,7 @@ export class SessionManager {
 
   /**
    * Broadcast default permissions changed event to all windows
-   * Triggered when ~/.craft-agent/permissions/default.json changes
+   * Triggered when ~/.claude-code-desktop/permissions/default.json changes
    */
   private broadcastDefaultPermissionsChanged(): void {
     if (!this.windowManager) return
@@ -919,7 +903,7 @@ export class SessionManager {
       }
 
       // Update source config to mark as authenticated
-      const { markSourceAuthenticated } = await import('@craft-agent/shared/sources')
+      const { markSourceAuthenticated } = await import('@claude-code-desktop/shared/sources')
       markSourceAuthenticated(managed.workspace.rootPath, request.sourceSlug)
 
       // Mark source as unseen so fresh guide is injected on next message
@@ -1574,7 +1558,7 @@ export class SessionManager {
         return { success: false, error: 'Session file not found' }
       }
 
-      const { VIEWER_URL } = await import('@craft-agent/shared/branding')
+      const { VIEWER_URL } = await import('@claude-code-desktop/shared/branding')
       const response = await fetch(`${VIEWER_URL}/s/api`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1635,7 +1619,7 @@ export class SessionManager {
         return { success: false, error: 'Session file not found' }
       }
 
-      const { VIEWER_URL } = await import('@craft-agent/shared/branding')
+      const { VIEWER_URL } = await import('@claude-code-desktop/shared/branding')
       const response = await fetch(`${VIEWER_URL}/s/api/${managed.sharedId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1677,7 +1661,7 @@ export class SessionManager {
     this.sendEvent({ type: 'async_operation', sessionId, isOngoing: true }, managed.workspace.id)
 
     try {
-      const { VIEWER_URL } = await import('@craft-agent/shared/branding')
+      const { VIEWER_URL } = await import('@claude-code-desktop/shared/branding')
       const response = await fetch(
         `${VIEWER_URL}/s/api/${managed.sharedId}`,
         { method: 'DELETE' }
@@ -2101,7 +2085,7 @@ export class SessionManager {
       const isFirstUserMessage = managed.messages.filter(m => m.role === 'user').length === 1
       if (isFirstUserMessage && !managed.name) {
         // Sanitize message to remove XML blocks (e.g. <edit_request>) before using as title
-        const sanitized = sanitizeForTitle(message)
+        const sanitized = sanitizeTextContent(message)
         const initialTitle = sanitized.slice(0, 50) + (sanitized.length > 50 ? '…' : '')
         managed.name = initialTitle
         this.persistSession(managed)

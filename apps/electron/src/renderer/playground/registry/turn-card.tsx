@@ -1,6 +1,6 @@
+import { DocumentFormattedMarkdownOverlay, TurnCard, type ActivityItem, type ResponseContent, type TodoItem } from '@claude-code-desktop/ui'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { ComponentEntry } from './types'
-import { useState, useEffect, type ReactNode } from 'react'
-import { TurnCard, DocumentFormattedMarkdownOverlay, type ActivityItem, type ResponseContent, type TodoItem } from '@craft-agent/ui'
 
 /** Wrapper with padding for playground preview */
 function PaddedWrapper({ children }: { children: ReactNode }) {

@@ -1,26 +1,24 @@
-import * as React from 'react'
-import type { ComponentEntry } from './types'
-import { AttachmentPreview } from '@/components/app-shell/AttachmentPreview'
-import { SetupAuthBanner } from '@/components/app-shell/SetupAuthBanner'
-import { TurnCard, type ActivityItem } from '@craft-agent/ui'
-import type { BackgroundTask } from '@/components/app-shell/ActiveTasksBar'
 import { ActiveOptionBadges } from '@/components/app-shell/ActiveOptionBadges'
+import type { BackgroundTask } from '@/components/app-shell/ActiveTasksBar'
+import { AttachmentPreview } from '@/components/app-shell/AttachmentPreview'
 import { InputContainer } from '@/components/app-shell/input'
 import type { StructuredResponse } from '@/components/app-shell/input/structured/types'
+import { SetupAuthBanner } from '@/components/app-shell/SetupAuthBanner'
 import { EmptyStateHint, getHintCount, getHintTemplate } from '@/components/chat/EmptyStateHint'
 import { Button } from '@/components/ui/button'
-import { motion } from 'motion/react'
-import { ArrowUp, Paperclip, ChevronDown, Sparkles } from 'lucide-react'
+import { TurnCard, type ActivityItem } from '@claude-code-desktop/ui'
+import { Sparkles } from 'lucide-react'
+import * as React from 'react'
 import type { FileAttachment, PermissionRequest } from '../../../shared/types'
-import { cn } from '@/lib/utils'
 import {
-  ensureMockElectronAPI,
-  mockInputCallbacks,
-  mockAttachmentCallbacks,
-  mockSources,
-  sampleImageAttachment,
-  samplePdfAttachment,
+    ensureMockElectronAPI,
+    mockAttachmentCallbacks,
+    mockInputCallbacks,
+    mockSources,
+    sampleImageAttachment,
+    samplePdfAttachment,
 } from '../mock-utils'
+import type { ComponentEntry } from './types'
 
 const sampleCodeAttachment: FileAttachment = {
   type: 'text',
@@ -501,7 +499,7 @@ function ActiveTasksBarContext({ tasks = sampleBackgroundTasks }: ActiveTasksBar
           onUltrathinkChange={setUltrathinkEnabled}
           sources={mockSources}
           enabledSourceSlugs={['github-api', 'local-files']}
-          workingDirectory="/Users/demo/projects/craft-agent"
+          workingDirectory="/Users/demo/projects/claude-code-desktop"
           sessionId="playground-session"
           onSubmit={mockInputCallbacks.onSubmit}
           onModelChange={mockInputCallbacks.onModelChange}
@@ -609,7 +607,7 @@ function PermissionInputToggle({ autoToggle = false, autoToggleInterval = 3000, 
         onUltrathinkChange={setUltrathinkEnabled}
         sources={mockSources}
         enabledSourceSlugs={['github-api', 'local-files']}
-        workingDirectory="/Users/demo/projects/craft-agent"
+        workingDirectory="/Users/demo/projects/claude-code-desktop"
         sessionId="playground-session"
         structuredInput={structuredInput}
         onStructuredResponse={handlePermissionResponse}
@@ -979,7 +977,7 @@ export const chatComponents: ComponentEntry[] = [
         name: 'workingDirectory',
         description: 'Current working directory',
         control: { type: 'string', placeholder: '/path/to/project' },
-        defaultValue: '/Users/demo/projects/craft-agent',
+        defaultValue: '/Users/demo/projects/claude-code-desktop',
       },
     ],
     mockData: () => {

@@ -20,14 +20,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This package uses subpath exports for clean imports:
 
 ```typescript
-import { CraftAgent, getPermissionMode, setPermissionMode } from '@craft-agent/shared/agent';
-import { loadStoredConfig, type Workspace } from '@craft-agent/shared/config';
-import { getCredentialManager } from '@craft-agent/shared/credentials';
-import { CraftMcpClient } from '@craft-agent/shared/mcp';
-import { loadWorkspaceSources, type LoadedSource } from '@craft-agent/shared/sources';
-import { loadStatusConfig, createStatus } from '@craft-agent/shared/statuses';
-import { resolveTheme } from '@craft-agent/shared/config/theme';
-import { debug } from '@craft-agent/shared/utils';
+import { CraftAgent, getPermissionMode, setPermissionMode } from '@claude-code-desktop/shared/agent';
+import { loadStoredConfig, type Workspace } from '@claude-code-desktop/shared/config';
+import { getCredentialManager } from '@claude-code-desktop/shared/credentials';
+import { CraftMcpClient } from '@claude-code-desktop/shared/mcp';
+import { loadWorkspaceSources, type LoadedSource } from '@claude-code-desktop/shared/sources';
+import { loadStatusConfig, createStatus } from '@claude-code-desktop/shared/statuses';
+import { resolveTheme } from '@claude-code-desktop/shared/config/theme';
+import { debug } from '@claude-code-desktop/shared/utils';
 ```
 
 ## Directory Structure
@@ -55,7 +55,7 @@ src/
 
 ## Key Concepts
 
-### CraftAgent (`src/agent/craft-agent.ts`)
+### CraftAgent (`src/agent/claude-code-desktop.ts`)
 The main agent class that wraps the Claude Agent SDK. Handles:
 - MCP server connections
 - Tool permissions via PreToolUse hook
@@ -144,7 +144,7 @@ Sources are external data connections (MCP servers, APIs, local filesystems). St
 
 ## Dependencies
 
-- `@craft-agent/core` - Shared types
+- `@claude-code-desktop/core` - Shared types
 - `@anthropic-ai/claude-agent-sdk` - Claude Agent SDK
 
 ## Type Checking

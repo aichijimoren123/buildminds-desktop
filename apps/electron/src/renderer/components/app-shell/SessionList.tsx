@@ -1,48 +1,39 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from "react"
-import { formatDistanceToNow, isToday, isYesterday, format, startOfDay } from "date-fns"
-import { MoreHorizontal, Flag, Search, X, Copy, Link2Off, CloudUpload, Globe, RefreshCw } from "lucide-react"
+import { format, formatDistanceToNow, isToday, isYesterday, startOfDay } from "date-fns"
+import { CloudUpload, Copy, Flag, Globe, Link2Off, MoreHorizontal, RefreshCw, Search, X } from "lucide-react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
 
-import { cn, isHexColor } from "@/lib/utils"
-import { rendererPerf } from "@/lib/perf"
-import { Spinner } from "@craft-agent/ui"
+import type { SessionMeta } from "@/atoms/sessions"
+import { ContextMenuProvider, DropdownMenuProvider } from "@/components/ui/menu-context"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { RenameDialog } from "@/components/ui/rename-dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { TodoStateMenu } from "@/components/ui/todo-filter-menu"
-import { getStateColor, getStateIcon, getStateLabel, type TodoStateId } from "@/config/todo-states"
-import type { TodoState } from "@/config/todo-states"
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  StyledDropdownMenuContent,
-  StyledDropdownMenuItem,
-  StyledDropdownMenuSeparator,
-} from "@/components/ui/styled-dropdown"
-import {
-  ContextMenu,
-  ContextMenuTrigger,
-  StyledContextMenuContent,
+    ContextMenu,
+    ContextMenuTrigger,
+    StyledContextMenuContent,
 } from "@/components/ui/styled-context-menu"
-import { DropdownMenuProvider, ContextMenuProvider } from "@/components/ui/menu-context"
-import { SessionMenu } from "./SessionMenu"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { RenameDialog } from "@/components/ui/rename-dialog"
-import { useSession } from "@/hooks/useSession"
-import { useFocusZone, useRovingTabIndex } from "@/hooks/keyboard"
-import { useNavigation, useNavigationState, routes, isChatsNavigation } from "@/contexts/NavigationContext"
+    DropdownMenu,
+    DropdownMenuTrigger,
+    StyledDropdownMenuContent,
+    StyledDropdownMenuItem,
+    StyledDropdownMenuSeparator,
+} from "@/components/ui/styled-dropdown"
+import { TodoStateMenu } from "@/components/ui/todo-filter-menu"
+import type { TodoState } from "@/config/todo-states"
+import { getStateColor, getStateIcon, type TodoStateId } from "@/config/todo-states"
 import { useFocusContext } from "@/context/FocusContext"
+import { isChatsNavigation, routes, useNavigation, useNavigationState } from "@/contexts/NavigationContext"
+import { useFocusZone, useRovingTabIndex } from "@/hooks/keyboard"
+import { useSession } from "@/hooks/useSession"
+import { rendererPerf } from "@/lib/perf"
+import { cn, isHexColor } from "@/lib/utils"
 import { getSessionTitle } from "@/utils/session"
-import type { SessionMeta } from "@/atoms/sessions"
-import { PERMISSION_MODE_CONFIG, type PermissionMode } from "@craft-agent/shared/agent/modes"
+import { PERMISSION_MODE_CONFIG, type PermissionMode } from "@claude-code-desktop/shared/agent/modes"
+import { Spinner } from "@claude-code-desktop/ui"
+import { SessionMenu } from "./SessionMenu"
 
 // Pagination constants
 const INITIAL_DISPLAY_LIMIT = 20

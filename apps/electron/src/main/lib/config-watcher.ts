@@ -5,53 +5,50 @@
  * Uses recursive directory watching for simplicity and reliability.
  *
  * Watched paths:
- * - ~/.craft-agent/config.json - Main app configuration
- * - ~/.craft-agent/preferences.json - User preferences
- * - ~/.craft-agent/theme.json - App-level theme overrides
- * - ~/.craft-agent/themes/*.json - Preset theme files (app-level)
- * - ~/.craft-agent/workspaces/{slug}/ - Workspace directory (recursive)
+ * - ~/.claude-code-desktop/config.json - Main app configuration
+ * - ~/.claude-code-desktop/preferences.json - User preferences
+ * - ~/.claude-code-desktop/theme.json - App-level theme overrides
+ * - ~/.claude-code-desktop/themes/*.json - Preset theme files (app-level)
+ * - ~/.claude-code-desktop/workspaces/{slug}/ - Workspace directory (recursive)
  *   - sources/{slug}/config.json, guide.md, permissions.json
  *   - skills/{slug}/SKILL.md, icon.*
  *   - permissions.json
  */
 
-import { watch, existsSync, readdirSync, statSync, readFileSync, mkdirSync } from 'fs';
-import { join, dirname, basename, relative } from 'path';
-import { homedir } from 'os';
+import { getAppPermissionsDir, permissionsConfigCache } from '@claude-code-desktop/shared/agent';
+import type { PresetTheme, ThemeOverrides } from '@claude-code-desktop/shared/config';
+import {
+    getAppThemesDir, loadAppTheme, loadPresetTheme, loadPresetThemes, loadStoredConfig, validateConfig,
+    validatePreferences,
+    validateSource, type StoredConfig, type ValidationResult
+} from '@claude-code-desktop/shared/config';
+import type { LoadedSkill } from '@claude-code-desktop/shared/skills';
+import { downloadSkillIcon, loadSkill, loadWorkspaceSkills, skillNeedsIconDownload } from '@claude-code-desktop/shared/skills';
+import type { LoadedSource, SourceGuide } from '@claude-code-desktop/shared/sources';
+import {
+    downloadSourceIcon,
+    loadSource,
+    loadSourceGuide,
+    loadWorkspaceSources,
+    sourceNeedsIconDownload,
+} from '@claude-code-desktop/shared/sources';
+import {
+    downloadStatusIcon,
+    loadStatusConfig,
+    statusNeedsIconDownload,
+} from '@claude-code-desktop/shared/statuses';
+import { debug, perf } from '@claude-code-desktop/shared/utils';
+import { getWorkspacePath, getWorkspaceSkillsPath, getWorkspaceSourcesPath } from '@claude-code-desktop/shared/workspaces';
 import type { FSWatcher } from 'fs';
-import { debug, perf } from '@craft-agent/shared/utils';
-import { loadStoredConfig, type StoredConfig } from '@craft-agent/shared/config';
-import {
-  validateConfig,
-  validatePreferences,
-  validateSource,
-  type ValidationResult,
-} from '@craft-agent/shared/config';
-import type { LoadedSource, SourceGuide } from '@craft-agent/shared/sources';
-import {
-  loadSource,
-  loadWorkspaceSources,
-  loadSourceGuide,
-  sourceNeedsIconDownload,
-  downloadSourceIcon,
-} from '@craft-agent/shared/sources';
-import { permissionsConfigCache, getAppPermissionsDir } from '@craft-agent/shared/agent';
-import { getWorkspacePath, getWorkspaceSourcesPath, getWorkspaceSkillsPath } from '@craft-agent/shared/workspaces';
-import type { LoadedSkill } from '@craft-agent/shared/skills';
-import { loadSkill, loadWorkspaceSkills, skillNeedsIconDownload, downloadSkillIcon } from '@craft-agent/shared/skills';
-import {
-  loadStatusConfig,
-  statusNeedsIconDownload,
-  downloadStatusIcon,
-} from '@craft-agent/shared/statuses';
-import { loadAppTheme, loadPresetThemes, loadPresetTheme, getAppThemesDir } from '@craft-agent/shared/config';
-import type { ThemeOverrides, PresetTheme } from '@craft-agent/shared/config';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, watch } from 'fs';
+import { homedir } from 'os';
+import { join } from 'path';
 
 // ============================================================
 // Constants
 // ============================================================
 
-const CONFIG_DIR = join(homedir(), '.craft-agent');
+const CONFIG_DIR = join(homedir(), '.claude-code-desktop');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
 const PREFERENCES_FILE = join(CONFIG_DIR, 'preferences.json');
 
@@ -102,7 +99,7 @@ export interface ConfigWatcherCallbacks {
   onSkillsListChange?: (skills: LoadedSkill[]) => void;
 
   // Permissions callbacks
-  /** Called when app-level default permissions change (~/.craft-agent/permissions/default.json) */
+  /** Called when app-level default permissions change (~/.claude-code-desktop/permissions/default.json) */
   onDefaultPermissionsChange?: () => void;
   /** Called when workspace permissions.json changes */
   onWorkspacePermissionsChange?: (workspaceId: string) => void;
@@ -834,7 +831,7 @@ export class ConfigWatcher {
   }
 
   /**
-   * Watch app-level themes directory (~/.craft-agent/themes/)
+   * Watch app-level themes directory (~/.claude-code-desktop/themes/)
    */
   private watchAppThemesDir(): void {
     const themesDir = getAppThemesDir();
@@ -863,7 +860,7 @@ export class ConfigWatcher {
   }
 
   /**
-   * Watch app-level permissions directory (~/.craft-agent/permissions/)
+   * Watch app-level permissions directory (~/.claude-code-desktop/permissions/)
    * Watches for changes to default.json which contains the default read-only patterns
    */
   private watchAppPermissionsDir(): void {

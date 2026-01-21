@@ -6,12 +6,11 @@
  * Supports optional fullscreen view using the shared DocumentFormattedMarkdownOverlay component.
  */
 
-import * as React from 'react'
-import { useState } from 'react'
-import { Maximize2 } from 'lucide-react'
 import { Markdown } from '@/components/markdown'
-import { DocumentFormattedMarkdownOverlay } from '@craft-agent/ui'
 import { cn } from '@/lib/utils'
+import { DocumentFormattedMarkdownOverlay } from '@claude-code-desktop/ui'
+import { Maximize2 } from 'lucide-react'
+import { useState } from 'react'
 
 export interface Info_MarkdownProps {
   /** Markdown content */

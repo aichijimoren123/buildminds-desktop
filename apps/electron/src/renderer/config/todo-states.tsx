@@ -1,7 +1,8 @@
+import { clearStatusIconCaches, statusIconCache } from '@/lib/icon-cache'
+import { sanitizeSvg } from '@/lib/sanitize'
+import type { StatusConfig } from '@claude-code-desktop/shared/statuses'
+import { ICON_EXTENSIONS, isEmoji } from '@claude-code-desktop/shared/utils/icon-constants'
 import * as React from 'react'
-import type { StatusConfig } from '@craft-agent/shared/statuses'
-import { isEmoji, ICON_EXTENSIONS } from '@craft-agent/shared/utils/icon-constants'
-import { statusIconCache, clearStatusIconCaches } from '@/lib/icon-cache'
 
 // ============================================================================
 // Types
@@ -72,20 +73,6 @@ interface ResolvedIcon {
 // ============================================================================
 
 const ICON_SIZE = 'h-3.5 w-3.5'
-
-/**
- * Sanitize SVG content (basic XSS prevention)
- * Removes script tags and event handlers
- */
-function sanitizeSvg(svg: string): string {
-  return svg
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, '')
-    .replace(/on\w+='[^']*'/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/\s+width="[^"]*"/gi, '')      // Remove width attribute
-    .replace(/\s+height="[^"]*"/gi, '')     // Remove height attribute
-}
 
 /**
  * Check if an SVG uses currentColor (meaning it should inherit the status color).

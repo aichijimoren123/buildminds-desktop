@@ -1,7 +1,7 @@
+import { createHash, randomBytes } from 'crypto';
 import { createServer, type Server } from 'http';
-import { URL } from 'url';
 import open from 'open';
-import { randomBytes, createHash } from 'crypto';
+import { URL } from 'url';
 import { CRAFT_LOGO_HTML } from '../branding.ts';
 
 export interface OAuthConfig {
@@ -673,7 +673,7 @@ export class CraftOAuth {
       }
     } else {
       // Use a default client ID for public clients
-      clientId = 'craft-agent';
+      clientId = 'claude-code-desktop';
       this.callbacks.onStatus(`Using default client ID: ${clientId}`);
     }
 

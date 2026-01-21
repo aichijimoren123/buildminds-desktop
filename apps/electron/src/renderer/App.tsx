@@ -1,47 +1,44 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import { useTheme } from '@/hooks/useTheme'
-import type { ThemeOverrides } from '@config/theme'
-import { useSetAtom, useStore, useAtomValue } from 'jotai'
-import type { Session, Workspace, SessionEvent, Message, FileAttachment, StoredAttachment, PermissionRequest, CredentialRequest, CredentialResponse, SetupNeeds, TodoState, NewChatActionParams, ContentBadge } from '../shared/types'
-import type { SessionOptions, SessionOptionUpdates } from './hooks/useSessionOptions'
-import { defaultSessionOptions, mergeSessionOptions } from './hooks/useSessionOptions'
-import { generateMessageId } from '../shared/types'
-import { useEventProcessor } from './event-processor'
-import type { AgentEvent, Effect } from './event-processor'
+import {
+    addSessionAtom,
+    backgroundTasksAtomFamily,
+    extractSessionMeta,
+    initializeSessionsAtom,
+    removeSessionAtom,
+    sessionAtomFamily,
+    sessionMetaMapAtom,
+    updateSessionAtom
+} from '@/atoms/sessions'
+import { skillsAtom } from '@/atoms/skills'
+import { sourcesAtom } from '@/atoms/sources'
 import { AppShell } from '@/components/app-shell/AppShell'
-import type { AppShellContextType } from '@/context/AppShellContext'
 import { OnboardingWizard, ReauthScreen } from '@/components/onboarding'
 import { ResetConfirmationDialog } from '@/components/ResetConfirmationDialog'
 import { SplashScreen } from '@/components/SplashScreen'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import type { AppShellContextType } from '@/context/AppShellContext'
 import { FocusProvider } from '@/context/FocusContext'
 import { ModalProvider } from '@/context/ModalContext'
-import { useGlobalShortcuts } from '@/hooks/keyboard'
-import { useWindowCloseHandler } from '@/hooks/useWindowCloseHandler'
-import { useOnboarding } from '@/hooks/useOnboarding'
-import { useNotifications } from '@/hooks/useNotifications'
-import { useSession } from '@/hooks/useSession'
-import { useUpdateChecker } from '@/hooks/useUpdateChecker'
 import { NavigationProvider } from '@/contexts/NavigationContext'
+import { useNotifications } from '@/hooks/useNotifications'
+import { useOnboarding } from '@/hooks/useOnboarding'
+import { useSession } from '@/hooks/useSession'
+import { useTheme } from '@/hooks/useTheme'
+import { useUpdateChecker } from '@/hooks/useUpdateChecker'
+import { useWindowCloseHandler } from '@/hooks/useWindowCloseHandler'
+import { extractBadges } from '@/lib/mentions'
+import { PlatformProvider, ShikiThemeProvider } from '@claude-code-desktop/ui'
+import { DEFAULT_MODEL } from '@config/models'
+import type { ThemeOverrides } from '@config/theme'
+import { getDefaultStore, useAtomValue, useSetAtom, useStore } from 'jotai'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { ContentBadge, CredentialRequest, CredentialResponse, FileAttachment, Message, NewChatActionParams, PermissionRequest, Session, SessionEvent, SetupNeeds, StoredAttachment, TodoState, Workspace } from '../shared/types'
+import { generateMessageId } from '../shared/types'
+import type { AgentEvent, Effect } from './event-processor'
+import { useEventProcessor } from './event-processor'
+import type { SessionOptions, SessionOptionUpdates } from './hooks/useSessionOptions'
+import { defaultSessionOptions, mergeSessionOptions } from './hooks/useSessionOptions'
 import { navigate, routes } from './lib/navigate'
 import { initRendererPerf } from './lib/perf'
-import { DEFAULT_MODEL } from '@config/models'
-import {
-  initializeSessionsAtom,
-  addSessionAtom,
-  removeSessionAtom,
-  updateSessionAtom,
-  sessionAtomFamily,
-  sessionMetaMapAtom,
-  backgroundTasksAtomFamily,
-  extractSessionMeta,
-  type SessionMeta,
-} from '@/atoms/sessions'
-import { sourcesAtom } from '@/atoms/sources'
-import { skillsAtom } from '@/atoms/skills'
-import { extractBadges } from '@/lib/mentions'
-import { getDefaultStore } from 'jotai'
-import { ShikiThemeProvider, PlatformProvider } from '@craft-agent/ui'
 
 type AppState = 'loading' | 'onboarding' | 'reauth' | 'ready'
 
@@ -1181,7 +1178,7 @@ export default function App() {
     openNewChat,
   ])
 
-  // Platform actions for @craft-agent/ui components (overlays, etc.)
+  // Platform actions for @claude-code-desktop/ui components (overlays, etc.)
   // Memoized to prevent re-renders when these callbacks don't change
   // NOTE: Must be defined before early returns to maintain consistent hook order
   const platformActions = useMemo(() => ({

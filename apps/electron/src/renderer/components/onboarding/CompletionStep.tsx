@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button"
-import { Spinner } from "@craft-agent/ui"
 import { AppSymbol } from "@/components/icons/AppSymbol"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@claude-code-desktop/ui"
 import { StepFormLayout } from "./primitives"
 
 interface CompletionStepProps {

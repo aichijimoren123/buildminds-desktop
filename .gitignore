@@ -46,7 +46,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 pnpm-lock.yaml
 
 # Craft Agent local data (sessions, credentials, config)
-.craft-agent/
+.claude-code-desktop/
 
 # SSH keys and secrets
 *.pem

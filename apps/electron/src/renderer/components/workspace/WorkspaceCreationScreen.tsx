@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { overlayTransitionIn } from "@/lib/animations"
+import { cn } from "@/lib/utils"
+import { FullscreenOverlayBase } from "@claude-code-desktop/ui"
+import { Dithering } from "@paper-design/shaders-react"
 import { X } from "lucide-react"
 import { motion } from "motion/react"
-import { Dithering } from "@paper-design/shaders-react"
-import { FullscreenOverlayBase } from "@craft-agent/ui"
-import { cn } from "@/lib/utils"
-import { overlayTransitionIn } from "@/lib/animations"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import type { Workspace } from "../../../shared/types"
 import { AddWorkspaceStep_Choice } from "./AddWorkspaceStep_Choice"
 import { AddWorkspaceStep_CreateNew } from "./AddWorkspaceStep_CreateNew"
 import { AddWorkspaceStep_OpenFolder } from "./AddWorkspaceStep_OpenFolder"
-import type { Workspace } from "../../../shared/types"
 
 type CreationStep = 'choice' | 'create' | 'open'
 

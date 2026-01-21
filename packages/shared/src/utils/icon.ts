@@ -17,17 +17,17 @@
  */
 
 import { existsSync, writeFileSync } from 'fs';
-import { join, extname } from 'path';
+import { extname, join } from 'path';
 import { debug } from './debug.ts';
 
 // Re-export pure constants from icon-constants.ts for backwards compatibility.
 // Renderer code should import directly from icon-constants.ts to avoid Node.js deps.
 export {
-  EMOJI_REGEX,
-  ICON_EXTENSIONS,
-  isEmoji,
-  isIconUrl,
-  isInvalidIconValue,
+    EMOJI_REGEX,
+    ICON_EXTENSIONS,
+    isEmoji,
+    isIconUrl,
+    isInvalidIconValue
 } from './icon-constants.ts';
 
 import { ICON_EXTENSIONS, isEmoji, isIconUrl, isInvalidIconValue } from './icon-constants.ts';
@@ -133,7 +133,7 @@ export async function downloadIcon(
   try {
     const response = await fetch(iconUrl, {
       headers: {
-        'User-Agent': 'Craft-Agent/1.0',
+        'User-Agent': 'claude-code-desktop/1.0',
       },
     });
 

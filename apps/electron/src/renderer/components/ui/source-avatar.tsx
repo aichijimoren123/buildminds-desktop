@@ -25,20 +25,20 @@
  * - Green: Connected, Yellow: Needs auth, Red: Failed, Gray: Untested
  */
 
-import * as React from 'react'
-import { CrossfadeAvatar } from '@/components/ui/avatar'
-import { cn } from '@/lib/utils'
-import {
-  sourceIconCache,
-  logoUrlCache,
-  clearIconCaches,
-  svgToThemedDataUrl,
-} from '@/lib/icon-cache'
-import { Mail, Plug, Globe, HardDrive } from 'lucide-react'
 import { McpIcon } from '@/components/icons/McpIcon'
-import { deriveServiceUrl } from '@craft-agent/shared/utils/service-url'
-import { isEmoji } from '@craft-agent/shared/utils/icon-constants'
-import type { LoadedSource } from '@craft-agent/shared/sources/types'
+import { CrossfadeAvatar } from '@/components/ui/avatar'
+import {
+    clearIconCaches,
+    logoUrlCache,
+    sourceIconCache,
+    svgToThemedDataUrl,
+} from '@/lib/icon-cache'
+import { cn } from '@/lib/utils'
+import type { LoadedSource } from '@claude-code-desktop/shared/sources/types'
+import { isEmoji } from '@claude-code-desktop/shared/utils/icon-constants'
+import { deriveServiceUrl } from '@claude-code-desktop/shared/utils/service-url'
+import { Globe, HardDrive, Mail, Plug } from 'lucide-react'
+import * as React from 'react'
 import type { SourceConnectionStatus } from '../../../shared/types'
 import { SourceStatusIndicator, deriveConnectionStatus } from './source-status-indicator'
 

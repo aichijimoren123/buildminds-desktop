@@ -7,10 +7,10 @@
  * - Paste from clipboard
  */
 
+import type { StoredSession } from '@claude-code-desktop/core'
+import { AlertCircle, FileJson, Upload } from 'lucide-react'
 import * as React from 'react'
-import { useState, useCallback, useRef, useEffect } from 'react'
-import type { StoredSession } from '@craft-agent/core'
-import { Upload, FileJson, AlertCircle } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface SessionUploadProps {
   onSessionLoad: (session: StoredSession) => void

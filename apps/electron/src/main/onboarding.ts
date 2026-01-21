@@ -3,20 +3,17 @@
  *
  * Handles workspace setup and configuration persistence.
  */
+import { clearOAuthState, CraftOAuth, exchangeClaudeCode, getAuthState, getExistingClaudeCredentials, getExistingClaudeToken, getMcpBaseUrl, getSetupNeeds, hasValidOAuthState, isClaudeCliInstalled, runClaudeSetupToken, startClaudeOAuth } from '@claude-code-desktop/shared/auth'
+import { generateWorkspaceId, loadStoredConfig, saveConfig, type AuthType, type StoredConfig } from '@claude-code-desktop/shared/config'
+import { getCredentialManager, getCredentialManager as getCredentialManagerFn } from '@claude-code-desktop/shared/credentials'
+import { validateMcpConnection } from '@claude-code-desktop/shared/mcp'
+import { getDefaultWorkspacesDir } from '@claude-code-desktop/shared/workspaces'
 import { ipcMain } from 'electron'
-import { mainLog } from './logger'
-import { getAuthState, getSetupNeeds } from '@craft-agent/shared/auth'
-import { getCredentialManager } from '@craft-agent/shared/credentials'
-import { saveConfig, loadStoredConfig, generateWorkspaceId, type AuthType, type StoredConfig } from '@craft-agent/shared/config'
-import { getDefaultWorkspacesDir } from '@craft-agent/shared/workspaces'
-import { CraftOAuth, getMcpBaseUrl } from '@craft-agent/shared/auth'
-import { validateMcpConnection } from '@craft-agent/shared/mcp'
-import { getExistingClaudeToken, getExistingClaudeCredentials, isClaudeCliInstalled, runClaudeSetupToken, startClaudeOAuth, exchangeClaudeCode, hasValidOAuthState, clearOAuthState } from '@craft-agent/shared/auth'
-import { getCredentialManager as getCredentialManagerFn } from '@craft-agent/shared/credentials'
 import {
-  IPC_CHANNELS,
-  type OnboardingSaveResult,
+    IPC_CHANNELS,
+    type OnboardingSaveResult,
 } from '../shared/types'
+import { mainLog } from './logger'
 import type { SessionManager } from './sessions'
 
 // ============================================

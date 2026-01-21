@@ -5,10 +5,10 @@
  * Supports loading, error, and empty states.
  */
 
-import * as React from 'react'
-import { cva } from 'class-variance-authority'
-import { Spinner } from '@craft-agent/ui'
 import { cn } from '@/lib/utils'
+import { Spinner } from '@claude-code-desktop/ui'
+import { cva } from 'class-variance-authority'
+import * as React from 'react'
 
 const groupHeaderVariants = cva(
   'px-4 py-2 border-b border-border/30 text-xs font-semibold uppercase tracking-wide',

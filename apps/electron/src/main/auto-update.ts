@@ -7,29 +7,29 @@
  * Supports macOS, Windows, and Linux (AppImage only).
  */
 
-import { app } from 'electron'
-import { createWriteStream, createReadStream, existsSync, mkdirSync, unlinkSync } from 'fs'
-import { join } from 'path'
+import {
+    clearDismissedUpdateVersion,
+    clearPendingUpdate,
+    getDismissedUpdateVersion,
+    getPendingUpdate,
+    setPendingUpdate,
+} from '@claude-code-desktop/shared/config'
+import {
+    getAppVersion,
+    getElectronLatestVersion,
+    getElectronManifest,
+    getPlatformKey,
+    isNewerVersion,
+} from '@claude-code-desktop/shared/version'
+import type { BinaryInfo, VersionManifest } from '@claude-code-desktop/shared/version/manifest'
 import { spawn } from 'child_process'
 import { createHash } from 'crypto'
+import { app } from 'electron'
+import { createReadStream, createWriteStream, existsSync, mkdirSync, unlinkSync } from 'fs'
+import { join } from 'path'
 import { pipeline } from 'stream/promises'
-import { mainLog } from './logger'
-import {
-  getElectronLatestVersion,
-  getElectronManifest,
-  isNewerVersion,
-  getPlatformKey,
-  getAppVersion,
-} from '@craft-agent/shared/version'
-import {
-  getDismissedUpdateVersion,
-  clearDismissedUpdateVersion,
-  getPendingUpdate,
-  setPendingUpdate,
-  clearPendingUpdate,
-} from '@craft-agent/shared/config'
-import type { VersionManifest, BinaryInfo } from '@craft-agent/shared/version/manifest'
 import type { UpdateInfo } from '../shared/types'
+import { mainLog } from './logger'
 import type { WindowManager } from './window-manager'
 
 // Module state
@@ -280,7 +280,7 @@ async function doDownloadUpdate(): Promise<void> {
 
   try {
     // Create temp directory for download
-    const tempDir = join(app.getPath('temp'), 'craft-agent-updates')
+    const tempDir = join(app.getPath('temp'), 'claude-code-desktop-updates')
     if (!existsSync(tempDir)) {
       mkdirSync(tempDir, { recursive: true })
     }
@@ -289,7 +289,7 @@ async function doDownloadUpdate(): Promise<void> {
     const extension = process.platform === 'darwin' ? 'dmg' :
                       process.platform === 'win32' ? 'exe' :
                       'AppImage'
-    installerPath = join(tempDir, `Craft-Agent-${latestVersion}.${extension}`)
+    installerPath = join(tempDir, `claude-code-desktop-${latestVersion}.${extension}`)
 
     // Remove existing file if present
     if (existsSync(installerPath)) {

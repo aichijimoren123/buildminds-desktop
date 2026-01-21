@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Spinner } from '@claude-code-desktop/ui'
 import { FileText } from 'lucide-react'
-import { Spinner } from '@craft-agent/ui'
+import { useEffect, useState } from 'react'
 
 interface FileViewerProps {
   path: string | null

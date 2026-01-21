@@ -3,7 +3,7 @@
 set -e
 
 VERSIONS_URL="https://agents.craft.do/electron"
-DOWNLOAD_DIR="$HOME/.craft-agent/downloads"
+DOWNLOAD_DIR="$HOME/.claude-code-desktop/downloads"
 
 # Colors for output
 RED='\033[0;31m'
@@ -127,7 +127,7 @@ else
         error "Linux currently only supports x64 architecture. Your architecture: $arch"
     fi
     platform="linux-${arch}"
-    APP_NAME="Craft-Agent-x64.AppImage"
+    APP_NAME="claude-code-desktop-x64.AppImage"
     INSTALL_DIR="$HOME/.local/bin"
     ext="AppImage"
 fi
@@ -164,7 +164,7 @@ if [ "$HAS_JQ" = true ]; then
 else
     checksum=$(get_checksum_from_manifest "$manifest_json" "$platform")
     # Fallback filename if not using jq
-    filename="Craft-Agent-${arch}.${ext}"
+    filename="claude-code-desktop-${arch}.${ext}"
 fi
 
 # Validate checksum format (SHA256 = 64 hex characters)
@@ -174,7 +174,7 @@ fi
 
 # Use default filename if not in manifest
 if [ -z "$filename" ]; then
-    filename="Craft-Agent-${arch}.${ext}"
+    filename="claude-code-desktop-${arch}.${ext}"
 fi
 
 info "Expected checksum: ${checksum:0:16}..."
@@ -212,7 +212,7 @@ if [ "$OS_TYPE" = "darwin" ]; then
     dmg_path="$installer_path"
 
     # Quit the app if it's running (use bundle ID for reliability)
-    APP_BUNDLE_ID="com.lukilabs.craft-agent"
+    APP_BUNDLE_ID="com.lukilabs.claude-code-desktop"
     if pgrep -x "Craft Agent" >/dev/null 2>&1; then
         info "Quitting Craft Agent..."
         osascript -e "tell application id \"$APP_BUNDLE_ID\" to quit" 2>/dev/null || true
@@ -286,14 +286,14 @@ else
     appimage_path="$installer_path"
 
     # New paths
-    APP_DIR="$HOME/.craft-agent/app"
-    WRAPPER_PATH="$INSTALL_DIR/craft-agents"
-    APPIMAGE_INSTALL_PATH="$APP_DIR/Craft-Agent-x64.AppImage"
+    APP_DIR="$HOME/.claude-code-desktop/app"
+    WRAPPER_PATH="$INSTALL_DIR/claude-code-desktops"
+    APPIMAGE_INSTALL_PATH="$APP_DIR/claude-code-desktop-x64.AppImage"
 
     # Kill the app if it's running
-    if pgrep -f "Craft-Agent.*AppImage" >/dev/null 2>&1; then
+    if pgrep -f "claude-code-desktop.*AppImage" >/dev/null 2>&1; then
         info "Stopping Craft Agent..."
-        pkill -f "Craft-Agent.*AppImage" 2>/dev/null || true
+        pkill -f "claude-code-desktop.*AppImage" 2>/dev/null || true
         sleep 2
     fi
 
@@ -315,9 +315,9 @@ else
 #!/bin/bash
 # Craft Agent launcher - handles Linux-specific AppImage issues
 
-APPIMAGE_PATH="$HOME/.craft-agent/app/Craft-Agent-x64.AppImage"
-ELECTRON_CACHE="$HOME/.config/@craft-agent"
-ELECTRON_CACHE_ALT="$HOME/.cache/@craft-agent"
+APPIMAGE_PATH="$HOME/.claude-code-desktop/app/claude-code-desktop-x64.AppImage"
+ELECTRON_CACHE="$HOME/.config/@claude-code-desktop"
+ELECTRON_CACHE_ALT="$HOME/.cache/@claude-code-desktop"
 
 # Verify AppImage exists
 if [ ! -f "$APPIMAGE_PATH" ]; then
@@ -349,7 +349,7 @@ WRAPPER_EOF
     chmod +x "$WRAPPER_PATH"
 
     # Migrate old installation
-    OLD_APPIMAGE="$INSTALL_DIR/Craft-Agent-x64.AppImage"
+    OLD_APPIMAGE="$INSTALL_DIR/claude-code-desktop-x64.AppImage"
     [ -f "$OLD_APPIMAGE" ] && rm -f "$OLD_APPIMAGE"
 
     echo ""
@@ -360,7 +360,7 @@ WRAPPER_EOF
     printf "%b\n" "  AppImage: ${BOLD}$APPIMAGE_INSTALL_PATH${NC}"
     printf "%b\n" "  Launcher: ${BOLD}$WRAPPER_PATH${NC}"
     echo ""
-    printf "%b\n" "  Run with: ${BOLD}craft-agents${NC}"
+    printf "%b\n" "  Run with: ${BOLD}claude-code-desktops${NC}"
     echo ""
     printf "%b\n" "  Add to PATH if needed:"
     printf "%b\n" "    ${BOLD}echo 'export PATH=\"\$HOME/.local/bin:\$PATH\"' >> ~/.bashrc${NC}"

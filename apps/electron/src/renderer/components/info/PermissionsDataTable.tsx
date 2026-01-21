@@ -5,17 +5,16 @@
  * Features: searchable patterns, sortable columns, max-height scroll, fullscreen view.
  */
 
-import * as React from 'react'
-import { useState } from 'react'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
+import { DataTableOverlay } from '@claude-code-desktop/ui'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Maximize2 } from 'lucide-react'
-import { Info_DataTable, SortableHeader } from './Info_DataTable'
-import { Info_Badge } from './Info_Badge'
-import { Info_StatusBadge } from './Info_StatusBadge'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { DataTableOverlay } from '@craft-agent/ui'
-import { cn } from '@/lib/utils'
+import { useState } from 'react'
 import { toast } from 'sonner'
+import { Info_Badge } from './Info_Badge'
+import { Info_DataTable, SortableHeader } from './Info_DataTable'
+import { Info_StatusBadge } from './Info_StatusBadge'
 
 export type PermissionAccess = 'allowed' | 'blocked'
 export type PermissionType = 'tool' | 'bash' | 'api' | 'mcp'

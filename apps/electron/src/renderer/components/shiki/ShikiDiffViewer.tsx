@@ -1,7 +1,7 @@
 /**
  * ShikiDiffViewer - Electron wrapper for the portable ShikiDiffViewer
  *
- * This thin wrapper imports the portable component from @craft-agent/ui
+ * This thin wrapper imports the portable component from @claude-code-desktop/ui
  * and connects it to Electron's ThemeContext.
  *
  * Note: The base component uses a simpler timing approach for onReady.
@@ -12,9 +12,8 @@
  * for diff visualization rather than the preset Shiki themes.
  */
 
-import * as React from 'react'
-import { ShikiDiffViewer as BaseShikiDiffViewer, type ShikiDiffViewerProps as BaseProps } from '@craft-agent/ui'
 import { useTheme } from '@/hooks/useTheme'
+import { ShikiDiffViewer as BaseShikiDiffViewer, type ShikiDiffViewerProps as BaseProps } from '@claude-code-desktop/ui'
 
 export interface ShikiDiffViewerProps extends Omit<BaseProps, 'theme'> {}
 

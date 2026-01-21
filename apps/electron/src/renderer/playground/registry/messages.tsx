@@ -1,24 +1,23 @@
-import * as React from 'react'
-import type { ComponentEntry } from './types'
+import { AuthRequestCard } from '@/components/chat/AuthRequestCard'
 import {
-  TurnCard,
-  type ActivityItem,
-  type ResponseContent,
-  Markdown,
-  CollapsibleMarkdownProvider,
-  Spinner,
-  UserMessageBubble,
-  SystemMessage,
-} from '@craft-agent/ui'
+    CollapsibleMarkdownProvider,
+    Markdown,
+    Spinner,
+    SystemMessage,
+    TurnCard,
+    UserMessageBubble,
+    type ActivityItem,
+    type ResponseContent,
+} from '@claude-code-desktop/ui'
 import { ExternalLink } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { cn } from '@/lib/utils'
-import { AuthRequestCard } from '@/components/chat/AuthRequestCard'
+import * as React from 'react'
 import type { Message } from '../../../shared/types'
+import type { ComponentEntry } from './types'
 
 // ============================================================================
 // Message Components - Demo components for playground preview
-// Uses shared components from @craft-agent/ui where available
+// Uses shared components from @claude-code-desktop/ui where available
 // ============================================================================
 
 /** Assistant message bubble - left aligned white card (playground demo version) */
@@ -315,7 +314,7 @@ const config = {
         </div>
       </section>
 
-      {/* Section: SystemMessage (from @craft-agent/ui) */}
+      {/* Section: SystemMessage (from @claude-code-desktop/ui) */}
       <section>
         <h2 className="text-lg font-semibold mb-4 text-foreground/80">SystemMessage (Shared)</h2>
         <div className="bg-muted/20 rounded-lg">
@@ -563,7 +562,7 @@ export const messagesComponents: ComponentEntry[] = [
     id: 'user-message-bubble',
     name: 'UserMessageBubble',
     category: 'Chat Messages',
-    description: 'Right-aligned user message bubble (from @craft-agent/ui)',
+    description: 'Right-aligned user message bubble (from @claude-code-desktop/ui)',
     component: UserMessageBubble,
     props: [
       {
@@ -626,7 +625,7 @@ export const messagesComponents: ComponentEntry[] = [
     id: 'system-message',
     name: 'SystemMessage',
     category: 'Chat Messages',
-    description: 'System/info/warning/error message (from @craft-agent/ui)',
+    description: 'System/info/warning/error message (from @claude-code-desktop/ui)',
     component: SystemMessage,
     props: [
       {

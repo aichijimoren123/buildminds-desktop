@@ -7,21 +7,21 @@
  * Renders a session's messages as turn cards with gradient fade at top/bottom.
  */
 
+import type { StoredSession } from '@claude-code-desktop/core'
 import type { ReactNode } from 'react'
-import { useMemo, useState, useCallback } from 'react'
-import type { StoredSession } from '@craft-agent/core'
-import { cn } from '../../lib/utils'
-import { CHAT_LAYOUT, CHAT_CLASSES } from '../../lib/layout'
+import { useCallback, useMemo, useState } from 'react'
 import { PlatformProvider, type PlatformActions } from '../../context'
-import { TurnCard } from './TurnCard'
-import { UserMessageBubble } from './UserMessageBubble'
+import { CHAT_CLASSES, CHAT_LAYOUT } from '../../lib/layout'
+import { cn } from '../../lib/utils'
 import { SystemMessage } from './SystemMessage'
 import {
-  groupMessagesByTurn,
-  storedToMessage,
-  type AssistantTurn,
-  type ActivityItem,
+    groupMessagesByTurn,
+    storedToMessage,
+    type ActivityItem,
+    type AssistantTurn,
 } from './turn-utils'
+import { TurnCard } from './TurnCard'
+import { UserMessageBubble } from './UserMessageBubble'
 
 export type SessionViewerMode = 'interactive' | 'readonly'
 

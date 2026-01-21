@@ -1,19 +1,14 @@
 /**
- * UI primitives for @craft-agent/ui
+ * UI primitives for @claude-code-desktop/ui
  */
 
-export { Spinner, type SpinnerProps, LoadingIndicator, type LoadingIndicatorProps } from './LoadingIndicator'
+export { LoadingIndicator, Spinner, type LoadingIndicatorProps, type SpinnerProps } from './LoadingIndicator'
 export {
-  SimpleDropdown,
-  SimpleDropdownItem,
-  type SimpleDropdownProps,
-  type SimpleDropdownItemProps,
-} from './SimpleDropdown'
-export {
-  PreviewHeader,
-  PreviewHeaderBadge,
-  PREVIEW_BADGE_VARIANTS,
-  type PreviewHeaderProps,
-  type PreviewHeaderBadgeProps,
-  type PreviewBadgeVariant,
+    PREVIEW_BADGE_VARIANTS, PreviewHeader,
+    PreviewHeaderBadge, type PreviewBadgeVariant, type PreviewHeaderBadgeProps, type PreviewHeaderProps
 } from './PreviewHeader'
+export {
+    SimpleDropdown,
+    SimpleDropdownItem, type SimpleDropdownItemProps, type SimpleDropdownProps
+} from './SimpleDropdown'
+

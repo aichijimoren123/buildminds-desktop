@@ -1,26 +1,25 @@
 /**
  * PreferencesPage
  *
- * Form-based editor for stored user preferences (~/.craft-agent/preferences.json).
+ * Form-based editor for stored user preferences (~/.claude-code-desktop/preferences.json).
  * Features:
  * - Fixed input fields for known preferences (name, timezone, location, language)
  * - Free-form textarea for notes
  * - Auto-saves on change with debouncing
  */
 
-import * as React from 'react'
-import { useState, useEffect, useCallback, useRef } from 'react'
 import { PanelHeader } from '@/components/app-shell/PanelHeader'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Spinner } from '@craft-agent/ui'
 import {
-  SettingsSection,
-  SettingsCard,
-  SettingsInput,
-  SettingsTextarea,
+    SettingsCard,
+    SettingsInput,
+    SettingsSection,
+    SettingsTextarea,
 } from '@/components/settings'
-import { EditPopover, EditButton, getEditConfig } from '@/components/ui/EditPopover'
+import { EditButton, EditPopover, getEditConfig } from '@/components/ui/EditPopover'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import type { DetailsPageMeta } from '@/lib/navigation-registry'
+import { Spinner } from '@claude-code-desktop/ui'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const meta: DetailsPageMeta = {
   navigator: 'settings',

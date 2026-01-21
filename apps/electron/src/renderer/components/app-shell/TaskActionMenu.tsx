@@ -1,14 +1,15 @@
-import * as React from 'react'
-import { ChevronDown, Square, ArrowUpRight } from 'lucide-react'
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  StyledDropdownMenuContent,
-  StyledDropdownMenuItem,
-  StyledDropdownMenuSeparator,
+    DropdownMenu,
+    DropdownMenuTrigger,
+    StyledDropdownMenuContent,
+    StyledDropdownMenuItem,
+    StyledDropdownMenuSeparator,
 } from '@/components/ui/styled-dropdown'
-import { Spinner } from '@craft-agent/ui'
+import { formatElapsedCompact, shortenId } from '@/lib/format-utils'
 import { cn } from '@/lib/utils'
+import { Spinner } from '@claude-code-desktop/ui'
+import { ArrowUpRight, ChevronDown, Square } from 'lucide-react'
+import * as React from 'react'
 import { toast } from 'sonner'
 import type { BackgroundTask } from './ActiveTasksBar'
 
@@ -18,24 +19,6 @@ export interface TerminalOverlayData {
   output: string
   description?: string
   toolType: 'bash' | 'grep' | 'glob'
-}
-
-/** Format elapsed time in a compact way */
-function formatElapsed(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  if (minutes < 60) {
-    return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`
-  }
-  const hours = Math.floor(minutes / 60)
-  const remainingMinutes = minutes % 60
-  return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`
-}
-
-/** Shorten task ID for compact display (show first 8 chars) */
-function shortenId(id: string): string {
-  return id.length > 8 ? `${id.slice(0, 8)}...` : id
 }
 
 export interface TaskActionMenuProps {
@@ -147,7 +130,7 @@ export function TaskActionMenu({ task, sessionId, onKillTask, onInsertMessage, o
 
           {/* Elapsed time */}
           <span className="opacity-60 tabular-nums">
-            {formatElapsed(displayElapsed)}
+            {formatElapsedCompact(displayElapsed)}
           </span>
 
           {/* Dropdown indicator */}

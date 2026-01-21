@@ -1,8 +1,8 @@
+import { cn } from '@/lib/utils'
+import type { PermissionMode } from '@claude-code-desktop/shared/agent/modes'
+import { MODELS } from '@config/models'
 import * as React from 'react'
 import type { ComponentEntry } from './types'
-import { cn } from '@/lib/utils'
-import { MODELS } from '@config/models'
-import type { PermissionMode } from '@craft-agent/shared/agent/modes'
 
 // Import REAL components from the main app
 import { FreeFormInput } from '@/components/app-shell/input/FreeFormInput'
@@ -12,8 +12,8 @@ import type { StructuredInputState } from '@/components/app-shell/input/structur
 
 // Import adapters for mock data generation
 import {
-  mockPermissionRequest,
-  type PermissionRequestPlaygroundProps,
+    mockPermissionRequest,
+    type PermissionRequestPlaygroundProps,
 } from '../adapters/input-adapters'
 
 // ============================================================================

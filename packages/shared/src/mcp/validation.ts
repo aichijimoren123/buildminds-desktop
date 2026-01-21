@@ -5,14 +5,14 @@
  * using the same code path as actual agent usage.
  */
 
-import { query, type McpServerStatus } from '@anthropic-ai/claude-agent-sdk';
+import { query } from '@anthropic-ai/claude-agent-sdk';
 import { spawn, type ChildProcess } from 'child_process';
-import { getDefaultOptions } from '../agent/options.ts';
-import { CraftMcpClient } from './client.js';
-import { debug } from '../utils/debug.ts';
-import { DEFAULT_MODEL } from '../config/models.ts';
 import { parseError, type AgentError } from '../agent/errors.ts';
+import { getDefaultOptions } from '../agent/options.ts';
+import { DEFAULT_MODEL } from '../config/models.ts';
 import { getLastApiError } from '../network-interceptor.ts';
+import { debug } from '../utils/debug.ts';
+import { CraftMcpClient } from './client.js';
 
 export interface InvalidProperty {
   toolName: string;
@@ -451,7 +451,7 @@ export async function validateStdioMcpConnection(
 
       // Create MCP client
       client = new Client(
-        { name: 'craft-agent-validator', version: '1.0.0' },
+        { name: 'claude-code-desktop-validator', version: '1.0.0' },
         { capabilities: {} }
       );
 

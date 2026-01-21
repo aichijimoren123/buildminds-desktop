@@ -5,13 +5,13 @@
  * Handles loading, error, and empty states with consistent styling.
  */
 
-import * as React from 'react'
-import { AlertCircle } from 'lucide-react'
 import { PanelHeader, type PanelHeaderProps } from '@/components/app-shell/PanelHeader'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Spinner } from '@craft-agent/ui'
-import { cn } from '@/lib/utils'
 import { CHAT_LAYOUT } from '@/config/layout'
+import { cn } from '@/lib/utils'
+import { Spinner } from '@claude-code-desktop/ui'
+import { AlertCircle } from 'lucide-react'
+import * as React from 'react'
 
 export interface Info_PageProps {
   children: React.ReactNode

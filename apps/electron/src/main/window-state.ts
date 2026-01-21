@@ -1,7 +1,8 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
-import { mainLog } from './logger'
-import { join } from 'path'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { homedir } from 'os'
+import { join } from 'path'
+import { sanitizeUrl } from '../lib/sanitize'
+import { mainLog } from './logger'
 
 export interface WindowBounds {
   x: number
@@ -23,7 +24,7 @@ export interface WindowState {
   lastFocusedWorkspaceId?: string
 }
 
-const CONFIG_DIR = join(homedir(), '.craft-agent')
+const CONFIG_DIR = join(homedir(), '.claude-code-desktop')
 const WINDOW_STATE_FILE = join(CONFIG_DIR, 'window-state.json')
 
 /**
@@ -41,21 +42,6 @@ export function saveWindowState(state: WindowState): void {
   } catch (error) {
     mainLog.error('[WindowState] Failed to save window state:', error)
   }
-}
-
-/**
- * Sanitize a saved URL to remove dev-mode localhost URLs
- * Returns undefined if the URL should not be restored
- */
-function sanitizeUrl(url: string | undefined): string | undefined {
-  if (!url) return undefined
-
-  // Remove localhost URLs (from dev mode) - they won't work in production
-  if (url.includes('localhost') || url.includes('127.0.0.1')) {
-    return undefined
-  }
-
-  return url
 }
 
 /**

@@ -1,9 +1,10 @@
-import * as React from 'react'
+import { formatPathForDisplay, getFolderName } from '@/lib/format-utils'
+import { cn } from '@/lib/utils'
+import { PERMISSION_MODE_CONFIG, PERMISSION_MODE_ORDER, type PermissionMode } from '@claude-code-desktop/shared/agent/modes'
+import { Icon_Folder } from '@claude-code-desktop/ui'
 import { Command as CommandPrimitive } from 'cmdk'
 import { Brain, Check } from 'lucide-react'
-import { Icon_Folder } from '@craft-agent/ui'
-import { cn } from '@/lib/utils'
-import { PERMISSION_MODE_CONFIG, PERMISSION_MODE_ORDER, type PermissionMode } from '@craft-agent/shared/agent/modes'
+import * as React from 'react'
 
 // ============================================================================
 // Types
@@ -497,23 +498,6 @@ export interface SlashCommandInputElement {
   getCaretRect?: () => DOMRect | null
   value: string
   selectionStart: number
-}
-
-/**
- * Format path for display, shortening home directory
- */
-function formatPathForDisplay(path: string, homeDir?: string): string {
-  if (homeDir && path.startsWith(homeDir)) {
-    return '~' + path.slice(homeDir.length)
-  }
-  return path
-}
-
-/**
- * Get folder name from path
- */
-function getFolderName(path: string): string {
-  return path.split('/').pop() || path
 }
 
 export interface UseInlineSlashCommandOptions {

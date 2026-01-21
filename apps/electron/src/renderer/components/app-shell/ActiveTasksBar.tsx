@@ -5,9 +5,6 @@
  * Each task shows: type icon, ID (shortened), elapsed time, kill button
  */
 
-import React from 'react'
-import { cn } from '@/lib/utils'
-import { Spinner } from '@craft-agent/ui'
 import { TaskActionMenu, type TerminalOverlayData } from './TaskActionMenu'
 
 export interface BackgroundTask {
@@ -38,24 +35,6 @@ export interface ActiveTasksBarProps {
   onShowTerminalOverlay?: (data: TerminalOverlayData) => void
   /** Additional class name */
   className?: string
-}
-
-/** Format elapsed time in a compact way */
-function formatElapsed(seconds: number): string {
-  if (seconds < 60) return `${seconds}s`
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  if (minutes < 60) {
-    return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`
-  }
-  const hours = Math.floor(minutes / 60)
-  const remainingMinutes = minutes % 60
-  return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`
-}
-
-/** Shorten task ID for compact display (show first 8 chars) */
-function shortenId(id: string): string {
-  return id.length > 8 ? `${id.slice(0, 8)}...` : id
 }
 
 /**

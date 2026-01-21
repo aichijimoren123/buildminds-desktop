@@ -4,7 +4,7 @@
 $ErrorActionPreference = "Stop"
 
 $VERSIONS_URL = "https://agents.craft.do/electron"
-$DOWNLOAD_DIR = "$env:TEMP\craft-agent-install"
+$DOWNLOAD_DIR = "$env:TEMP\claude-code-desktop-install"
 $APP_NAME = "Craft Agent"
 
 # Colors for output
@@ -65,7 +65,7 @@ if (-not $checksum -or $checksum.Length -ne 64) {
 
 # Use default filename if not in manifest
 if (-not $filename) {
-    $filename = "Craft-Agent-$arch.exe"
+    $filename = "claude-code-desktop-$arch.exe"
 }
 
 # Use default URL if not in manifest
@@ -183,10 +183,10 @@ Write-Info "Cleaning up..."
 Remove-Item -Path $installerPath -Force -ErrorAction SilentlyContinue
 
 # Add command line shortcut
-Write-Info "Adding 'craft-agents' command to PATH..."
+Write-Info "Adding 'claude-code-desktops' command to PATH..."
 
 $binDir = "$env:LOCALAPPDATA\Craft Agent\bin"
-$cmdFile = "$binDir\craft-agents.cmd"
+$cmdFile = "$binDir\claude-code-desktops.cmd"
 $exePath = "$env:LOCALAPPDATA\Programs\Craft Agent\Craft Agent.exe"
 
 # Create bin directory
@@ -201,9 +201,9 @@ $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($userPath -notlike "*$binDir*") {
     $newPath = "$userPath;$binDir"
     [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
-    Write-Success "Added to PATH (restart terminal to use 'craft-agents' command)"
+    Write-Success "Added to PATH (restart terminal to use 'claude-code-desktops' command)"
 } else {
-    Write-Success "Command 'craft-agents' is ready"
+    Write-Success "Command 'claude-code-desktops' is ready"
 }
 
 Write-Host ""
@@ -215,5 +215,5 @@ Write-Host "  Craft Agent has been installed."
 Write-Host ""
 Write-Host "  Launch from:"
 Write-Host "    - Start Menu or desktop shortcut"
-Write-Host "    - Command line: craft-agents (restart terminal first)"
+Write-Host "    - Command line: claude-code-desktops (restart terminal first)"
 Write-Host ""

@@ -16,12 +16,12 @@
  * - lg: fills container (info panels)
  */
 
-import * as React from 'react'
 import { CrossfadeAvatar } from '@/components/ui/avatar'
+import { clearSkillIconCaches, skillIconCache, svgToThemedDataUrl } from '@/lib/icon-cache'
 import { cn } from '@/lib/utils'
-import { skillIconCache, clearSkillIconCaches, svgToThemedDataUrl } from '@/lib/icon-cache'
+import { isEmoji } from '@claude-code-desktop/shared/utils/icon-constants'
 import { Zap } from 'lucide-react'
-import { isEmoji } from '@craft-agent/shared/utils/icon-constants'
+import * as React from 'react'
 import type { LoadedSkill } from '../../../shared/types'
 
 export type SkillAvatarSize = 'xs' | 'sm' | 'md' | 'lg'

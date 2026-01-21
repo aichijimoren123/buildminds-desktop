@@ -1,16 +1,17 @@
 /**
- * Context exports for @craft-agent/ui
+ * Context exports for @claude-code-desktop/ui
  */
 
 export {
-  PlatformProvider,
-  usePlatform,
-  type PlatformActions,
-  type PlatformProviderProps,
+    PlatformProvider,
+    usePlatform,
+    type PlatformActions,
+    type PlatformProviderProps
 } from './PlatformContext'
 
 export {
-  ShikiThemeProvider,
-  useShikiTheme,
-  type ShikiThemeProviderProps,
+    ShikiThemeProvider,
+    useShikiTheme,
+    type ShikiThemeProviderProps
 } from './ShikiThemeContext'
+

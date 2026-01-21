@@ -1,61 +1,60 @@
+import { Icon_Folder } from '@claude-code-desktop/ui'
+import { Command as CommandPrimitive } from 'cmdk'
+import {
+    ArrowUp,
+    Check,
+    ChevronDown,
+    DatabaseZap,
+    Loader2,
+    Paperclip,
+    Square,
+} from 'lucide-react'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { Command as CommandPrimitive } from 'cmdk'
 import { toast } from 'sonner'
-import {
-  Paperclip,
-  ArrowUp,
-  Square,
-  Check,
-  DatabaseZap,
-  ChevronDown,
-  Loader2,
-} from 'lucide-react'
-import { Icon_Folder } from '@craft-agent/ui'
 
 import * as storage from '@/lib/local-storage'
 
 import { Button } from '@/components/ui/button'
 import {
-  InlineSlashCommand,
-  useInlineSlashCommand,
-  type SlashCommandId,
-} from '@/components/ui/slash-command-menu'
-import {
-  InlineMentionMenu,
-  useInlineMention,
-  type MentionItem,
-  type MentionItemType,
-} from '@/components/ui/mention-menu'
-import { parseMentions } from '@/lib/mentions'
-import { RichTextInput, type RichTextInputHandle } from '@/components/ui/rich-text-input'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuPortal,
+    DropdownMenu,
+    DropdownMenuSub,
+    DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import {
-  StyledDropdownMenuContent,
-  StyledDropdownMenuItem,
-  StyledDropdownMenuSeparator,
-  StyledDropdownMenuSubTrigger,
-  StyledDropdownMenuSubContent,
-} from '@/components/ui/styled-dropdown'
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
-import { applySmartTypography } from '@/lib/smart-typography'
-import { AttachmentPreview } from '../AttachmentPreview'
-import { MODELS, getModelShortName } from '@config/models'
+    InlineMentionMenu,
+    useInlineMention,
+    type MentionItem
+} from '@/components/ui/mention-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { RichTextInput, type RichTextInputHandle } from '@/components/ui/rich-text-input'
+import {
+    InlineSlashCommand,
+    useInlineSlashCommand,
+    type SlashCommandId,
+} from '@/components/ui/slash-command-menu'
 import { SourceAvatar } from '@/components/ui/source-avatar'
-import { FreeFormInputContextBadge } from './FreeFormInputContextBadge'
-import type { FileAttachment, LoadedSource, LoadedSkill } from '../../../../shared/types'
-import type { PermissionMode } from '@craft-agent/shared/agent/modes'
-import { PERMISSION_MODE_ORDER } from '@craft-agent/shared/agent/modes'
-import { type ThinkingLevel, THINKING_LEVELS, getThinkingLevelName } from '@craft-agent/shared/agent/thinking-levels'
+import {
+    StyledDropdownMenuContent,
+    StyledDropdownMenuItem,
+    StyledDropdownMenuSeparator,
+    StyledDropdownMenuSubContent,
+    StyledDropdownMenuSubTrigger,
+} from '@/components/ui/styled-dropdown'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useEscapeInterrupt } from '@/context/EscapeInterruptContext'
+import { formatWorkingDirectory } from '@/lib/format-utils'
+import { parseMentions } from '@/lib/mentions'
+import { applySmartTypography } from '@/lib/smart-typography'
+import { cn } from '@/lib/utils'
+import type { PermissionMode } from '@claude-code-desktop/shared/agent/modes'
+import { PERMISSION_MODE_ORDER } from '@claude-code-desktop/shared/agent/modes'
+import { THINKING_LEVELS, getThinkingLevelName, type ThinkingLevel } from '@claude-code-desktop/shared/agent/thinking-levels'
+import { MODELS, getModelShortName } from '@config/models'
+import type { FileAttachment, LoadedSkill, LoadedSource } from '../../../../shared/types'
+import { AttachmentPreview } from '../AttachmentPreview'
 import { EscapeInterruptOverlay } from './EscapeInterruptOverlay'
+import { FreeFormInputContextBadge } from './FreeFormInputContextBadge'
 
 /**
  * Format token count for display (e.g., 1500 -> "1.5k", 200000 -> "200k")
@@ -1423,18 +1422,6 @@ function addRecentDir(path: string): void {
 }
 
 /**
- * Format path for display, with home directory shortened
- */
-function formatPathForDisplay(path: string, homeDir: string): string {
-  let displayPath = path
-  if (homeDir && path.startsWith(homeDir)) {
-    const relativePath = path.slice(homeDir.length)
-    displayPath = relativePath || '/'
-  }
-  return `in ${displayPath}`
-}
-
-/**
  * WorkingDirectoryBadge - Context badge for selecting working directory
  * Uses cmdk for filterable folder list when there are more than 5 recent folders.
  */
@@ -1538,7 +1525,7 @@ function WorkingDirectoryBadge({
               hasFolder ? (
                 <span className="flex flex-col gap-0.5">
                   <span className="font-medium">Working directory</span>
-                  <span className="text-xs opacity-70">{formatPathForDisplay(workingDirectory, homeDir)}</span>
+                  <span className="text-xs opacity-70">{formatWorkingDirectory(workingDirectory, homeDir)}</span>
                 </span>
               ) : "Choose working directory"
             }
@@ -1571,7 +1558,7 @@ function WorkingDirectoryBadge({
                 <Icon_Folder className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
                 <span className="flex-1 min-w-0 truncate">
                   <span>{folderName}</span>
-                  <span className="text-muted-foreground ml-1.5">{formatPathForDisplay(workingDirectory, homeDir)}</span>
+                  <span className="text-muted-foreground ml-1.5">{formatWorkingDirectory(workingDirectory, homeDir)}</span>
                 </span>
                 <Check className="h-4 w-4 shrink-0" />
               </CommandPrimitive.Item>
@@ -1595,7 +1582,7 @@ function WorkingDirectoryBadge({
                   <Icon_Folder className="h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
                   <span className="flex-1 min-w-0 truncate">
                     <span>{recentFolderName}</span>
-                    <span className="text-muted-foreground ml-1.5">{formatPathForDisplay(path, homeDir)}</span>
+                    <span className="text-muted-foreground ml-1.5">{formatWorkingDirectory(path, homeDir)}</span>
                   </span>
                 </CommandPrimitive.Item>
               )

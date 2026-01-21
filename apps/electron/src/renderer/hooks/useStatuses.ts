@@ -5,9 +5,9 @@
  * Auto-refreshes when workspace changes.
  */
 
-import { useState, useEffect, useCallback } from 'react'
-import type { StatusConfig } from '@craft-agent/shared/statuses'
 import { clearIconCache } from '@/config/todo-states'
+import type { StatusConfig } from '@claude-code-desktop/shared/statuses'
+import { useCallback, useEffect, useState } from 'react'
 
 export interface UseStatusesResult {
   statuses: StatusConfig[]

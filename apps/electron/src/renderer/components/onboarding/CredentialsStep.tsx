@@ -1,12 +1,12 @@
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-import { Eye, EyeOff, ExternalLink, CheckCircle2, XCircle, Plug, ChevronDown, ChevronUp } from "lucide-react"
-import { Spinner } from "@craft-agent/ui"
+import { Spinner } from "@claude-code-desktop/ui"
+import { CheckCircle2, ChevronDown, ChevronUp, ExternalLink, Eye, EyeOff, Plug, XCircle } from "lucide-react"
+import { useState } from "react"
 import type { BillingMethod } from "./BillingMethodStep"
-import { StepFormLayout, BackButton, ContinueButton, type StepIconVariant } from "./primitives"
+import { BackButton, ContinueButton, StepFormLayout, type StepIconVariant } from "./primitives"
 
 export type CredentialStatus = 'idle' | 'validating' | 'success' | 'error'
 export type TestStatus = 'idle' | 'testing' | 'success' | 'error'

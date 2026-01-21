@@ -14,8 +14,8 @@ Thank you for your interest in contributing to Craft Agents! This document provi
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/anthropics/craft-agents.git
-   cd craft-agents
+   git clone https://github.com/anthropics/claude-code-desktops.git
+   cd claude-code-desktops
    ```
 
 2. Install dependencies:
@@ -93,14 +93,14 @@ How you tested these changes
 ## Project Structure
 
 ```
-craft-agents/
+claude-code-desktops/
 ├── apps/
 │   ├── electron/    # Desktop GUI (primary interface)
 │   └── tui/         # Terminal CLI (deprecated)
 └── packages/
-    ├── core/        # @craft-agent/core - Shared types
-    ├── shared/      # @craft-agent/shared - Business logic
-    └── ui/          # @craft-agent/ui - React components
+    ├── core/        # @claude-code-desktop/core - Shared types
+    ├── shared/      # @claude-code-desktop/shared - Business logic
+    └── ui/          # @claude-code-desktop/ui - React components
 ```
 
 ## Key Areas
