@@ -6,6 +6,7 @@
  * Settings:
  * - Appearance (Theme, Font)
  * - Notifications
+ * - API Provider (Anthropic, OpenRouter, Custom)
  * - Billing (API Key, Claude Max)
  */
 
@@ -29,10 +30,13 @@ import {
   Check,
   ExternalLink,
   CheckCircle2,
+  Plug,
+  XCircle,
 } from 'lucide-react'
 import { Spinner } from '@craft-agent/ui'
 import type { AuthType } from '../../../shared/types'
 import type { DetailsPageMeta } from '@/lib/navigation-registry'
+import { type ProviderType, PROVIDER_CONFIGS } from '@claude-code-desktop/core'
 
 import {
   SettingsSection,
@@ -336,6 +340,13 @@ export default function AppSettingsPage() {
   const [hasCredential, setHasCredential] = useState(false)
   const [isLoadingBilling, setIsLoadingBilling] = useState(true)
 
+  // Provider state
+  const [provider, setProvider] = useState<ProviderType>('anthropic')
+  const [customBaseUrl, setCustomBaseUrl] = useState('')
+  const [isSavingProvider, setIsSavingProvider] = useState(false)
+  const [providerTestStatus, setProviderTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle')
+  const [providerTestError, setProviderTestError] = useState<string | undefined>()
+
   // API Key state
   const [apiKeyValue, setApiKeyValue] = useState('')
   const [isSavingApiKey, setIsSavingApiKey] = useState(false)
@@ -364,18 +375,24 @@ export default function AppSettingsPage() {
     }
   }, [updateChecker])
 
-  // Load current billing method, notifications setting, and preset themes on mount
+  // Load current billing method, notifications setting, provider config, and preset themes on mount
   useEffect(() => {
     const loadSettings = async () => {
       if (!window.electronAPI) return
       try {
-        const [billing, notificationsOn] = await Promise.all([
+        const [billing, notificationsOn, providerConfig] = await Promise.all([
           window.electronAPI.getBillingMethod(),
           window.electronAPI.getNotificationsEnabled(),
+          window.electronAPI.getProviderConfig?.() ?? Promise.resolve({ provider: 'anthropic', baseUrl: undefined }),
         ])
         setAuthType(billing.authType)
         setHasCredential(billing.hasCredential)
         setNotificationsEnabled(notificationsOn)
+        // Load provider config
+        if (providerConfig) {
+          setProvider(providerConfig.provider || 'anthropic')
+          setCustomBaseUrl(providerConfig.baseUrl || '')
+        }
       } catch (error) {
         console.error('Failed to load settings:', error)
       } finally {
@@ -560,6 +577,67 @@ export default function AppSettingsPage() {
     await window.electronAPI.setNotificationsEnabled(enabled)
   }, [])
 
+  // Handle provider change
+  const handleProviderChange = useCallback(async (newProvider: ProviderType) => {
+    setProvider(newProvider)
+    setProviderTestStatus('idle')
+    setProviderTestError(undefined)
+
+    // Get the default base URL for the provider
+    const config = PROVIDER_CONFIGS[newProvider]
+    const baseUrl = newProvider === 'custom' ? customBaseUrl : (config.baseUrl || '')
+
+    // Save provider config
+    setIsSavingProvider(true)
+    try {
+      await window.electronAPI.setProviderConfig?.(newProvider, baseUrl || undefined)
+    } catch (error) {
+      console.error('Failed to save provider config:', error)
+    } finally {
+      setIsSavingProvider(false)
+    }
+  }, [customBaseUrl])
+
+  // Handle custom base URL change
+  const handleCustomBaseUrlChange = useCallback(async (url: string) => {
+    setCustomBaseUrl(url)
+    setProviderTestStatus('idle')
+    setProviderTestError(undefined)
+  }, [])
+
+  // Save custom base URL
+  const handleSaveCustomBaseUrl = useCallback(async () => {
+    setIsSavingProvider(true)
+    try {
+      await window.electronAPI.setProviderConfig?.(provider, customBaseUrl || undefined)
+    } catch (error) {
+      console.error('Failed to save custom base URL:', error)
+    } finally {
+      setIsSavingProvider(false)
+    }
+  }, [provider, customBaseUrl])
+
+  // Test provider connection using stored credentials
+  const handleTestConnection = useCallback(async () => {
+    if (!window.electronAPI?.testProviderConnection) return
+
+    setProviderTestStatus('testing')
+    setProviderTestError(undefined)
+
+    try {
+      const result = await window.electronAPI.testProviderConnection()
+      if (result.success) {
+        setProviderTestStatus('success')
+      } else {
+        setProviderTestStatus('error')
+        setProviderTestError(result.error || 'Connection test failed')
+      }
+    } catch (error) {
+      setProviderTestStatus('error')
+      setProviderTestError(error instanceof Error ? error.message : 'Connection test failed')
+    }
+  }, [])
+
   return (
     <div className="h-full flex flex-col">
       <PanelHeader title="App Settings" actions={<HeaderMenu route={routes.view.settings('app')} />} />
@@ -618,6 +696,103 @@ export default function AppSettingsPage() {
                   checked={notificationsEnabled}
                   onCheckedChange={handleNotificationsEnabledChange}
                 />
+              </SettingsCard>
+            </SettingsSection>
+
+            {/* API Provider */}
+            <SettingsSection title="API Provider" description="Configure which API endpoint to use">
+              <SettingsCard>
+                <SettingsMenuSelectRow
+                  label="Provider"
+                  description={PROVIDER_CONFIGS[provider].name}
+                  value={provider}
+                  onValueChange={(v) => handleProviderChange(v as ProviderType)}
+                  options={[
+                    { value: 'anthropic', label: 'Anthropic (Official)', description: 'Direct connection to Anthropic API' },
+                    { value: 'openrouter', label: 'OpenRouter', description: 'Use OpenRouter as API proxy' },
+                    { value: 'custom', label: 'Custom Provider', description: 'Configure your own API endpoint' },
+                  ]}
+                />
+                {/* Show Base URL for OpenRouter and Custom */}
+                {provider !== 'anthropic' && (
+                  <SettingsRow label="Base URL">
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="text"
+                          value={provider === 'openrouter' ? PROVIDER_CONFIGS.openrouter.baseUrl : customBaseUrl}
+                          onChange={(e) => handleCustomBaseUrlChange(e.target.value)}
+                          placeholder="https://api.example.com/v1"
+                          className="flex-1"
+                          disabled={provider === 'openrouter' || isSavingProvider}
+                        />
+                        {provider === 'custom' && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleSaveCustomBaseUrl}
+                            disabled={isSavingProvider}
+                          >
+                            {isSavingProvider ? <Spinner className="size-4" /> : 'Save'}
+                          </Button>
+                        )}
+                      </div>
+                      {provider === 'openrouter' && (
+                        <p className="text-xs text-muted-foreground">
+                          OpenRouter uses a fixed endpoint. Get your API key from{' '}
+                          <a
+                            href="https://openrouter.ai/keys"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-foreground hover:underline"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              window.electronAPI?.openUrl('https://openrouter.ai/keys')
+                            }}
+                          >
+                            openrouter.ai
+                          </a>
+                        </p>
+                      )}
+                    </div>
+                  </SettingsRow>
+                )}
+                {/* Test Connection */}
+                <SettingsRow label="Connection">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleTestConnection}
+                        disabled={providerTestStatus === 'testing' || !hasCredential}
+                        className="gap-2"
+                      >
+                        {providerTestStatus === 'testing' ? (
+                          <Spinner className="size-4" />
+                        ) : providerTestStatus === 'success' ? (
+                          <CheckCircle2 className="size-4 text-success" />
+                        ) : providerTestStatus === 'error' ? (
+                          <XCircle className="size-4 text-destructive" />
+                        ) : (
+                          <Plug className="size-4" />
+                        )}
+                        {providerTestStatus === 'testing' ? 'Testing...' : 'Test Connection'}
+                      </Button>
+                      {providerTestStatus === 'success' && (
+                        <span className="text-sm text-success">Connected!</span>
+                      )}
+                    </div>
+                    {!hasCredential && (
+                      <p className="text-xs text-muted-foreground">
+                        Configure an API key in Billing settings first.
+                      </p>
+                    )}
+                    {providerTestStatus === 'error' && providerTestError && (
+                      <p className="text-sm text-destructive break-words">{providerTestError}</p>
+                    )}
+                  </div>
+                </SettingsRow>
               </SettingsCard>
             </SettingsSection>
 

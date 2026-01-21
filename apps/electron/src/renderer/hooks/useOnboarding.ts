@@ -40,6 +40,7 @@ interface UseOnboardingReturn {
   handleSubmitCredential: (credential: string, baseUrl?: string) => void
   handleTestConnection: (apiKey: string, baseUrl?: string) => Promise<{ success: boolean; error?: string }>
   handleStartOAuth: () => void
+  handleSkipCredentials: () => void  // Skip API configuration
 
   // Claude OAuth
   existingClaudeToken: string | null
@@ -198,6 +199,39 @@ export function useOnboarding({
         success: false,
         error: error instanceof Error ? error.message : 'Connection test failed',
       }
+    }
+  }, [])
+
+  // Skip API configuration - go directly to completion
+  const handleSkipCredentials = useCallback(async () => {
+    console.log('[Onboarding] Skipping API configuration')
+
+    // Save minimal config without credentials
+    try {
+      const result = await window.electronAPI.saveOnboardingConfig({
+        // No authType, no credential - user will configure later
+      })
+
+      if (result.success) {
+        setState(s => ({
+          ...s,
+          step: 'complete',
+          completionStatus: 'complete',
+        }))
+      } else {
+        setState(s => ({
+          ...s,
+          errorMessage: result.error || 'Failed to save configuration',
+        }))
+      }
+    } catch (error) {
+      console.error('[Onboarding] Skip error:', error)
+      // Still proceed to completion even on error
+      setState(s => ({
+        ...s,
+        step: 'complete',
+        completionStatus: 'complete',
+      }))
     }
   }, [])
 
@@ -364,6 +398,7 @@ export function useOnboarding({
     handleSubmitCredential,
     handleTestConnection,
     handleStartOAuth,
+    handleSkipCredentials,
     existingClaudeToken,
     isClaudeCliInstalled,
     handleUseExistingClaudeToken,

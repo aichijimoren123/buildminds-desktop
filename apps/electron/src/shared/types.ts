@@ -40,6 +40,11 @@ import type { AuthState, SetupNeeds } from '@craft-agent/shared/auth/types';
 import type { AuthType } from '@craft-agent/shared/config/types';
 export type { AuthState, SetupNeeds, AuthType };
 
+// Import and re-export provider types
+import type { ProviderType } from '@claude-code-desktop/core';
+export type { ProviderType };
+export { PROVIDER_CONFIGS } from '@claude-code-desktop/core';
+
 // Import source types for session source selection
 import type { LoadedSource, FolderSourceConfig, SourceConnectionStatus } from '@craft-agent/shared/sources/types';
 export type { LoadedSource, FolderSourceConfig, SourceConnectionStatus };
@@ -535,6 +540,11 @@ export const IPC_CHANNELS = {
   SETTINGS_GET_BILLING_METHOD: 'settings:getBillingMethod',
   SETTINGS_UPDATE_BILLING_METHOD: 'settings:updateBillingMethod',
 
+  // Settings - Provider
+  SETTINGS_GET_PROVIDER_CONFIG: 'settings:getProviderConfig',
+  SETTINGS_SET_PROVIDER_CONFIG: 'settings:setProviderConfig',
+  SETTINGS_TEST_PROVIDER_CONNECTION: 'settings:testProviderConnection',
+
   // Settings - Model
   SETTINGS_GET_MODEL: 'settings:getModel',
   SETTINGS_SET_MODEL: 'settings:setModel',
@@ -734,6 +744,11 @@ export interface ElectronAPI {
   // Settings - Billing
   getBillingMethod(): Promise<BillingMethodInfo>
   updateBillingMethod(authType: AuthType, credential?: string): Promise<void>
+
+  // Settings - Provider
+  getProviderConfig?(): Promise<{ provider: string; baseUrl?: string } | null>
+  setProviderConfig?(provider: string, baseUrl?: string): Promise<void>
+  testProviderConnection?(): Promise<{ success: boolean; error?: string }>
 
   // Settings - Model (global default)
   getModel(): Promise<string | null>

@@ -1232,6 +1232,7 @@ export default function App() {
           onSubmitCredential={onboarding.handleSubmitCredential}
           onTestConnection={onboarding.handleTestConnection}
           onStartOAuth={onboarding.handleStartOAuth}
+          onSkipCredentials={onboarding.handleSkipCredentials}
           onFinish={onboarding.handleFinish}
           existingClaudeToken={onboarding.existingClaudeToken}
           isClaudeCliInstalled={onboarding.isClaudeCliInstalled}

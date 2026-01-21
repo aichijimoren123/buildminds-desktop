@@ -9,7 +9,11 @@ export type {
   AuthType,
   OAuthCredentials,
   StoredConfig,
+  ProviderType,
 } from './workspace.ts';
+
+// Provider configurations
+export { PROVIDER_CONFIGS } from './workspace.ts';
 
 // Session types
 export type {

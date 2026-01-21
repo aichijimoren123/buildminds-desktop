@@ -255,6 +255,35 @@ export function setApiBaseUrl(url: string | undefined): void {
 }
 
 /**
+ * Get provider configuration.
+ * Returns provider type and optional base URL.
+ */
+export function getProviderConfig(): { provider: string; baseUrl?: string } | null {
+  const config = loadStoredConfig();
+  if (!config) return null;
+  return {
+    provider: config.provider || 'anthropic',
+    baseUrl: config.apiBaseUrl,
+  };
+}
+
+/**
+ * Set provider configuration.
+ * Provider type determines which API endpoint to use.
+ */
+export function setProviderConfig(provider: string, baseUrl?: string): void {
+  const config = loadStoredConfig();
+  if (!config) return;
+  config.provider = provider as 'anthropic' | 'openrouter' | 'custom';
+  if (baseUrl && baseUrl.trim()) {
+    config.apiBaseUrl = baseUrl.trim();
+  } else {
+    delete config.apiBaseUrl;
+  }
+  saveConfig(config);
+}
+
+/**
  * Get whether desktop notifications are enabled.
  * Defaults to true if not set.
  */

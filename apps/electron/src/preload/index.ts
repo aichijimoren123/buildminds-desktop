@@ -172,6 +172,12 @@ const api: ElectronAPI = {
   updateBillingMethod: (authType: AuthType, credential?: string) =>
     ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_UPDATE_BILLING_METHOD, authType, credential),
 
+  // Settings - Provider
+  getProviderConfig: () => ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_GET_PROVIDER_CONFIG),
+  setProviderConfig: (provider: string, baseUrl?: string) =>
+    ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_SET_PROVIDER_CONFIG, provider, baseUrl),
+  testProviderConnection: () => ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_TEST_PROVIDER_CONNECTION),
+
   // Settings - Model (global default)
   getModel: () => ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_GET_MODEL),
   setModel: (model: string) => ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_SET_MODEL, model),

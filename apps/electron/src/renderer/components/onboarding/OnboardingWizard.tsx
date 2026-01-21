@@ -33,6 +33,7 @@ interface OnboardingWizardProps {
   onSubmitCredential: (credential: string, baseUrl?: string) => void
   onTestConnection?: (apiKey: string, baseUrl?: string) => Promise<{ success: boolean; error?: string }>
   onStartOAuth?: () => void
+  onSkipCredentials?: () => void  // Skip API configuration
   onFinish: () => void
 
   // Claude OAuth
@@ -64,6 +65,7 @@ export function OnboardingWizard({
   onSubmitCredential,
   onTestConnection,
   onStartOAuth,
+  onSkipCredentials,
   onFinish,
   existingClaudeToken,
   isClaudeCliInstalled,
@@ -104,6 +106,7 @@ export function OnboardingWizard({
             onTestConnection={onTestConnection}
             onStartOAuth={onStartOAuth}
             onBack={onBack}
+            onSkip={onSkipCredentials}
             existingClaudeToken={existingClaudeToken}
             isClaudeCliInstalled={isClaudeCliInstalled}
             onUseExistingClaudeToken={onUseExistingClaudeToken}

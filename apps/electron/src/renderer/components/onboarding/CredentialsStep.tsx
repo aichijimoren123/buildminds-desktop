@@ -24,6 +24,7 @@ interface CredentialsStepProps {
   onTestConnection?: (apiKey: string, baseUrl?: string) => Promise<{ success: boolean; error?: string }>
   onStartOAuth?: () => void
   onBack: () => void
+  onSkip?: () => void  // Skip API configuration
   // Claude OAuth specific
   existingClaudeToken?: string | null
   isClaudeCliInstalled?: boolean
@@ -85,6 +86,7 @@ export function CredentialsStep({
   onTestConnection,
   onStartOAuth,
   onBack,
+  onSkip,
   existingClaudeToken,
   isClaudeCliInstalled,
   onUseExistingClaudeToken,
@@ -410,6 +412,19 @@ export function CredentialsStep({
         )}
         {testStatus === 'error' && testError && (
           <p className="text-sm text-destructive">{testError}</p>
+        )}
+
+        {/* Skip option */}
+        {onSkip && (
+          <div className="pt-2 text-center border-t border-border/50">
+            <button
+              type="button"
+              onClick={onSkip}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Skip for now — configure later in Settings
+            </button>
+          </div>
         )}
       </form>
     </StepFormLayout>

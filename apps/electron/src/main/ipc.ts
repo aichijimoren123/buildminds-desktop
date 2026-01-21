@@ -894,6 +894,67 @@ export function registerIpcHandlers(sessionManager: SessionManager, windowManage
   })
 
   // ============================================================
+  // Settings - Provider
+  // ============================================================
+
+  // Get provider configuration
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_GET_PROVIDER_CONFIG, async () => {
+    const { getProviderConfig } = await import('@craft-agent/shared/config')
+    return getProviderConfig()
+  })
+
+  // Set provider configuration
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_SET_PROVIDER_CONFIG, async (_event, provider: string, baseUrl?: string) => {
+    const { setProviderConfig } = await import('@craft-agent/shared/config')
+    setProviderConfig(provider, baseUrl)
+    ipcLog.info(`Provider config updated: ${provider}${baseUrl ? ` (${baseUrl})` : ''}`)
+
+    // Reinitialize SessionManager auth to pick up new base URL
+    try {
+      await sessionManager.reinitializeAuth()
+      ipcLog.info('Reinitialized auth after provider update')
+    } catch (authError) {
+      ipcLog.error('Failed to reinitialize auth:', authError)
+    }
+  })
+
+  // Test provider connection using stored credentials
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_TEST_PROVIDER_CONNECTION, async () => {
+    try {
+      const { getApiBaseUrl } = await import('@craft-agent/shared/config')
+      const manager = getCredentialManager()
+
+      // Get stored API key or OAuth token
+      const apiKey = await manager.getApiKey()
+      const oauthToken = await manager.getClaudeOAuth()
+
+      // Use whichever credential is available (prefer API key)
+      const authToken = apiKey || oauthToken
+
+      if (!authToken) {
+        return { success: false, error: 'No API key or auth token configured. Please set up your credentials in Billing settings.' }
+      }
+
+      const baseUrl = getApiBaseUrl()
+
+      // Test the connection
+      const Anthropic = (await import('@anthropic-ai/sdk')).default
+      const client = new Anthropic({
+        apiKey: authToken,
+        ...(baseUrl && { baseURL: baseUrl }),
+      })
+      await client.models.list()
+
+      ipcLog.info('Provider connection test successful')
+      return { success: true }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      ipcLog.error('Provider connection test failed:', message, error)
+      return { success: false, error: message }
+    }
+  })
+
+  // ============================================================
   // Settings - Model
   // ============================================================
 
