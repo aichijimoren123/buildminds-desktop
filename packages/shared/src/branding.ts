@@ -20,11 +20,11 @@ export const DEEPLINK_SCHEME = 'claudecode';
 export const CONFIG_DIR_NAME = `.${APP_SLUG}`;
 
 // ============================================================
-// LEGACY EXPORTS - For backward compatibility
+// LOGO EXPORTS
 // ============================================================
 
-/** @deprecated Use APP_NAME instead */
-export const CRAFT_LOGO = [
+/** ASCII art logo for terminal/console display */
+export const CLAUDE_CODE_LOGO = [
   '  ██████ ██       █████  ██    ██ ██████  ███████ ',
   ' ██      ██      ██   ██ ██    ██ ██   ██ ██      ',
   ' ██      ██      ███████ ██    ██ ██   ██ █████   ',
@@ -33,7 +33,13 @@ export const CRAFT_LOGO = [
 ] as const;
 
 /** Logo as a single string for HTML templates */
-export const CRAFT_LOGO_HTML = CRAFT_LOGO.map((line) => line.trimEnd()).join('\n');
+export const CLAUDE_CODE_LOGO_HTML = CLAUDE_CODE_LOGO.map((line) => line.trimEnd()).join('\n');
+
+/** @deprecated Use CLAUDE_CODE_LOGO instead */
+export const CRAFT_LOGO = CLAUDE_CODE_LOGO;
+
+/** @deprecated Use CLAUDE_CODE_LOGO_HTML instead */
+export const CRAFT_LOGO_HTML = CLAUDE_CODE_LOGO_HTML;
 
 /** Session viewer base URL - set to empty if not using viewer */
 export const VIEWER_URL = '';

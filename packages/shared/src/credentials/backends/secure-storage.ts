@@ -1,7 +1,7 @@
 /**
  * Secure Storage Backend
  *
- * Stores credentials in an encrypted file at ~/.craft-agent/credentials.enc
+ * Stores credentials in an encrypted file at ~/.claude-code-desktop/credentials.enc
  * Uses AES-256-GCM for authenticated encryption.
  *
  * Encryption key is derived from machine-specific data (hostname, username, homedir)
@@ -10,7 +10,7 @@
  *
  * File format:
  *   [Header - 64 bytes]
- *   ├── Magic: "CRAFT01\0" (8 bytes)
+ *   ├── Magic: "CLAUDE1\0" (8 bytes)
  *   ├── Flags: uint32 LE (4 bytes) - reserved for future use
  *   ├── Salt: 32 bytes (PBKDF2 salt)
  *   ├── Reserved: 20 bytes
@@ -36,11 +36,11 @@ import type { CredentialId, StoredCredential } from '../types.ts';
 import { credentialIdToAccount, accountToCredentialId } from '../types.ts';
 
 // File location
-const CREDENTIALS_DIR = join(homedir(), '.craft-agent');
+const CREDENTIALS_DIR = join(homedir(), '.claude-code-desktop');
 const CREDENTIALS_FILE = join(CREDENTIALS_DIR, 'credentials.enc');
 
 // File format constants
-const MAGIC_BYTES = Buffer.from('CRAFT01\0');
+const MAGIC_BYTES = Buffer.from('CLAUDE1\0');
 const HEADER_SIZE = 64;
 const MAGIC_SIZE = 8;
 const FLAGS_SIZE = 4;

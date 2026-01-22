@@ -130,7 +130,7 @@ export async function getAuthState(): Promise<AuthState> {
   const config = loadStoredConfig();
   const manager = getCredentialManager();
 
-  const craftToken = await manager.getCraftOAuth();
+  const claudeCodeToken = await manager.getClaudeCodeOAuth();
   const apiKey = await manager.getApiKey();
   const claudeOAuth = await getValidClaudeOAuthToken();
   const activeWorkspace = getActiveWorkspace();
@@ -145,8 +145,8 @@ export async function getAuthState(): Promise<AuthState> {
 
   return {
     craft: {
-      hasToken: !!craftToken,
-      token: craftToken,
+      hasToken: !!claudeCodeToken,
+      token: claudeCodeToken,
     },
     billing: {
       type: config?.authType ?? null,

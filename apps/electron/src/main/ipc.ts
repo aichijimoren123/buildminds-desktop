@@ -1464,8 +1464,8 @@ export function registerIpcHandlers(sessionManager: SessionManager, windowManage
       }
 
       // Create unified MCP client for both stdio and HTTP transports
-      const { CraftMcpClient } = await import('@claude-code-desktop/shared/mcp')
-      let client: InstanceType<typeof CraftMcpClient>
+      const { ClaudeCodeMcpClient } = await import('@claude-code-desktop/shared/mcp')
+      let client: InstanceType<typeof ClaudeCodeMcpClient>
 
       if (source.config.mcp.transport === 'stdio') {
         // Stdio transport - spawn local MCP server process
@@ -1473,7 +1473,7 @@ export function registerIpcHandlers(sessionManager: SessionManager, windowManage
           return { success: false, error: 'Stdio MCP source is missing required "command" field' }
         }
         ipcLog.info(`Fetching MCP tools via stdio: ${source.config.mcp.command}`)
-        client = new CraftMcpClient({
+        client = new ClaudeCodeMcpClient({
           transport: 'stdio',
           command: source.config.mcp.command,
           args: source.config.mcp.args,
@@ -1496,7 +1496,7 @@ export function registerIpcHandlers(sessionManager: SessionManager, windowManage
         }
 
         ipcLog.info(`Fetching MCP tools from ${source.config.mcp.url}`)
-        client = new CraftMcpClient({
+        client = new ClaudeCodeMcpClient({
           transport: 'http',
           url: source.config.mcp.url,
           headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,

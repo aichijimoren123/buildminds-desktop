@@ -25,7 +25,7 @@ log.initialize()
 
 // Enable debug/perf in dev mode (running from source)
 if (isDebugMode) {
-  process.env.CRAFT_DEBUG = '1'
+  process.env.CLAUDE_CODE_DEBUG = '1'
   enableDebug()
   setPerfEnabled(true)
 }
@@ -33,7 +33,7 @@ if (isDebugMode) {
 // Custom URL scheme for deeplinks (e.g., aiagent://action/new-chat)
 // Supports multi-instance dev: APP_DEEPLINK_SCHEME env var (aiagent1, aiagent2, etc.)
 import { DEEPLINK_SCHEME as DEFAULT_DEEPLINK_SCHEME } from '@claude-code-desktop/shared/branding'
-const DEEPLINK_SCHEME = process.env.APP_DEEPLINK_SCHEME || process.env.CRAFT_DEEPLINK_SCHEME || DEFAULT_DEEPLINK_SCHEME
+const DEEPLINK_SCHEME = process.env.APP_DEEPLINK_SCHEME || process.env.CLAUDE_CODE_DEEPLINK_SCHEME || DEFAULT_DEEPLINK_SCHEME
 
 let windowManager: WindowManager | null = null
 let sessionManager: SessionManager | null = null
@@ -44,7 +44,7 @@ let pendingDeepLink: string | null = null
 // Set app name early (before app.whenReady) to ensure correct macOS menu bar title
 // Supports multi-instance dev: APP_NAME env var
 import { APP_NAME as DEFAULT_APP_NAME } from '@claude-code-desktop/shared/branding'
-app.setName(process.env.APP_NAME || process.env.CRAFT_APP_NAME || DEFAULT_APP_NAME)
+app.setName(process.env.APP_NAME || process.env.CLAUDE_CODE_APP_NAME || DEFAULT_APP_NAME)
 
 // Register as default protocol client for craftagents:// URLs
 // This must be done before app.whenReady() on some platforms
@@ -176,8 +176,8 @@ app.whenReady().then(async () => {
     }
 
     // Multi-instance dev: show instance number badge on dock icon
-    // CRAFT_INSTANCE_NUMBER is set by detect-instance.sh for numbered folders
-    const instanceNum = process.env.CRAFT_INSTANCE_NUMBER
+    // CLAUDE_CODE_INSTANCE_NUMBER is set by detect-instance.sh for numbered folders
+    const instanceNum = process.env.CLAUDE_CODE_INSTANCE_NUMBER
     if (instanceNum) {
       const num = parseInt(instanceNum, 10)
       if (!isNaN(num) && num > 0) {

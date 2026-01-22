@@ -1,4 +1,4 @@
-import { CraftAgent, type CraftAgentConfig, type PermissionMode, type SdkMcpServerConfig } from '../agent/craft-agent.ts';
+import { ClaudeCodeAgent, type ClaudeCodeAgentConfig, type PermissionMode, type SdkMcpServerConfig } from '../agent/claude-code-agent.ts';
 import { createApiServer } from '../sources/api-tools.ts';
 import { listSessions, getOrCreateSessionById, updateSessionSdkId } from '../sessions/storage.ts';
 import { debug } from '../utils/debug.ts';
@@ -50,7 +50,7 @@ const SAFE_COMMANDS = new Set([
  */
 export class HeadlessRunner {
   private config: HeadlessConfig;
-  private agent: CraftAgent | null = null;
+  private agent: ClaudeCodeAgent | null = null;
 
   // Session management
   private workspaceRootPath: string | null = null;
@@ -192,7 +192,7 @@ ${this.config.prompt}
     const permissionMode = policyToPermissionMode(this.config.permissionPolicy);
     debug('[HeadlessRunner] Using permission mode:', permissionMode, 'from policy:', this.config.permissionPolicy || 'deny-all');
 
-    const agentConfig: CraftAgentConfig = {
+    const agentConfig: ClaudeCodeAgentConfig = {
       workspace: this.config.workspace,
       model: this.config.model,
       isHeadless: true,
@@ -206,7 +206,7 @@ ${this.config.prompt}
       },
     };
 
-    this.agent = new CraftAgent(agentConfig);
+    this.agent = new ClaudeCodeAgent(agentConfig);
 
     // Wire up permission handler based on policy
     this.agent.onPermissionRequest = (request) => {

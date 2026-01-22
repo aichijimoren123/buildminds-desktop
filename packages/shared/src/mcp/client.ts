@@ -57,14 +57,14 @@ const BLOCKED_ENV_VARS = [
   'NPM_TOKEN',
 ];
 
-export class CraftMcpClient {
+export class ClaudeCodeMcpClient {
   private client: Client;
   private transport: Transport;
   private connected = false;
 
   constructor(config: McpClientConfig) {
     this.client = new Client({
-      name: 'craft-agent',
+      name: 'claude-code',
       version: '1.0.0',
     });
 

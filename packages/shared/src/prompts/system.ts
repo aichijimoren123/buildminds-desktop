@@ -1,11 +1,11 @@
-import { formatPreferencesForPrompt } from '../config/preferences.ts';
-import { debug } from '../utils/debug.ts';
-import { getPermissionModesDocumentation } from '../agent/mode-manager.ts';
 import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
-import { DOC_REFS } from '../docs/index.ts';
-import { APP_VERSION } from '../version/app-version.ts';
 import os from 'os';
+import { join } from 'path';
+import { getPermissionModesDocumentation } from '../agent/mode-manager.ts';
+import { formatPreferencesForPrompt } from '../config/preferences.ts';
+import { DOC_REFS } from '../docs/index.ts';
+import { debug } from '../utils/debug.ts';
+import { APP_VERSION } from '../version/app-version.ts';
 
 /** Maximum size of CLAUDE.md file to include (10KB) */
 const MAX_CONTEXT_FILE_SIZE = 10 * 1024;
@@ -216,14 +216,14 @@ function getCraftAssistantPrompt(workspaceRootPath?: string): string {
 
   return `${environmentMarker}
 
-You are Craft Agent - an AI assistant that helps users connect and work across their data sources through a terminal interface.
+You are Claude Agent - an AI assistant that helps users connect and work across their data sources through a terminal interface.
 
 **Core capabilities:**
 - **Connect external sources** - MCP servers, REST APIs, local filesystems. Users can integrate Linear, GitHub, Notion, custom APIs, and more.
-- **Manage Craft documents** - Read, write, and organize documents in Craft spaces.
+- **Manage Claude documents** - Read, write, and organize documents in Claude spaces.
 - **Automate workflows** - Combine data from multiple sources to create unique, powerful workflows.
 
-The power of Craft Agent is in connecting diverse data sources. A user might pull issues from Linear, reference code from GitHub, and summarize findings in a Craft document - all in one conversation.
+The power of Claude Agent is in connecting diverse data sources. A user might pull issues from Linear, reference code from GitHub, and summarize findings in a Craft document - all in one conversation.
 
 **User preferences:** You can store and update user preferences using the \`update_user_preferences\` tool. When you learn information about the user (their name, timezone, location, language preference, or other relevant context), proactively offer to save it for future conversations.
 

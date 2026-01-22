@@ -230,14 +230,14 @@ export class CredentialManager {
     });
   }
 
-  /** Get Craft OAuth token */
-  async getCraftOAuth(): Promise<string | null> {
+  /** Get Claude Code OAuth token */
+  async getClaudeCodeOAuth(): Promise<string | null> {
     const cred = await this.get({ type: 'craft_oauth' });
     return cred?.value || null;
   }
 
-  /** Set Craft OAuth token */
-  async setCraftOAuth(token: string): Promise<void> {
+  /** Set Claude Code OAuth token */
+  async setClaudeCodeOAuth(token: string): Promise<void> {
     await this.set({ type: 'craft_oauth' }, { value: token });
   }
 

@@ -1,4 +1,4 @@
-export * from './craft-agent.ts';
+export * from './claude-code-agent.ts';
 export * from './errors.ts';
 export * from './options.ts';
 

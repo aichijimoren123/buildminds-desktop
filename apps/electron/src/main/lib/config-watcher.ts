@@ -5,11 +5,11 @@
  * Uses recursive directory watching for simplicity and reliability.
  *
  * Watched paths:
- * - ~/.craft-agent/config.json - Main app configuration
- * - ~/.craft-agent/preferences.json - User preferences
- * - ~/.craft-agent/theme.json - App-level theme overrides
- * - ~/.craft-agent/themes/*.json - Preset theme files (app-level)
- * - ~/.craft-agent/workspaces/{slug}/ - Workspace directory (recursive)
+ * - ~/.claude-code-desktop/config.json - Main app configuration
+ * - ~/.claude-code-desktop/preferences.json - User preferences
+ * - ~/.claude-code-desktop/theme.json - App-level theme overrides
+ * - ~/.claude-code-desktop/themes/*.json - Preset theme files (app-level)
+ * - ~/.claude-code-desktop/workspaces/{slug}/ - Workspace directory (recursive)
  *   - sources/{slug}/config.json, guide.md, permissions.json
  *   - skills/{slug}/SKILL.md, icon.*
  *   - permissions.json
@@ -51,7 +51,7 @@ import type { ThemeOverrides, PresetTheme } from '@claude-code-desktop/shared/co
 // Constants
 // ============================================================
 
-const CONFIG_DIR = join(homedir(), '.craft-agent');
+const CONFIG_DIR = join(homedir(), '.claude-code-desktop');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
 const PREFERENCES_FILE = join(CONFIG_DIR, 'preferences.json');
 

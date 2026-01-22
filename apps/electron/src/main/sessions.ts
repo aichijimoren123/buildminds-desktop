@@ -2,7 +2,7 @@ import { app } from 'electron'
 import { join } from 'path'
 import { existsSync } from 'fs'
 import { rm, readFile } from 'fs/promises'
-import { CraftAgent, type AgentEvent, setPermissionMode, type PermissionMode, unregisterSessionScopedToolCallbacks, AbortReason, type AuthRequest, type AuthResult, type CredentialAuthRequest } from '@claude-code-desktop/shared/agent'
+import { ClaudeCodeAgent, type AgentEvent, setPermissionMode, type PermissionMode, unregisterSessionScopedToolCallbacks, AbortReason, type AuthRequest, type AuthResult, type CredentialAuthRequest } from '@claude-code-desktop/shared/agent'
 import { sessionLog, isDebugMode, getLogFilePath } from './logger'
 import { createSdkMcpServer } from '@anthropic-ai/claude-agent-sdk'
 import type { WindowManager } from './window-manager'
@@ -42,7 +42,7 @@ import { ConfigWatcher, type ConfigWatcherCallbacks } from '@claude-code-desktop
 import { getAuthState } from '@claude-code-desktop/shared/auth'
 import { setAnthropicOptionsEnv, setPathToClaudeCodeExecutable, setInterceptorPath, setExecutable } from '@claude-code-desktop/shared/agent'
 import { getCredentialManager } from '@claude-code-desktop/shared/credentials'
-import { CraftMcpClient } from '@claude-code-desktop/shared/mcp'
+import { ClaudeCodeMcpClient } from '@claude-code-desktop/shared/mcp'
 import { type Session, type Message, type SessionEvent, type FileAttachment, type StoredAttachment, type SendMessageOptions, IPC_CHANNELS, generateMessageId } from '../shared/types'
 import { generateSessionTitle, regenerateSessionTitle, formatPathsToRelative, formatToolInputPaths, perf } from '@claude-code-desktop/shared/utils'
 import { DEFAULT_MODEL } from '@claude-code-desktop/shared/config'
@@ -124,7 +124,7 @@ async function buildServersFromSources(sources: LoadedSource[]) {
 interface ManagedSession {
   id: string
   workspace: Workspace
-  agent: CraftAgent | null  // Lazy-loaded - null until first message
+  agent: ClaudeCodeAgent | null  // Lazy-loaded - null until first message
   messages: Message[]
   isProcessing: boolean
   lastMessageAt: number
@@ -1169,11 +1169,11 @@ export class SessionManager {
   /**
    * Get or create agent for a session (lazy loading)
    */
-  private async getOrCreateAgent(managed: ManagedSession): Promise<CraftAgent> {
+  private async getOrCreateAgent(managed: ManagedSession): Promise<ClaudeCodeAgent> {
     if (!managed.agent) {
       const end = perf.start('agent.create', { sessionId: managed.id })
       const config = loadStoredConfig()
-      managed.agent = new CraftAgent({
+      managed.agent = new ClaudeCodeAgent({
         workspace: managed.workspace,
         // Session model takes priority, fallback to global config
         model: managed.model || config?.model,
