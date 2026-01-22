@@ -190,57 +190,6 @@ export class CredentialManager {
     await this.set({ type: 'anthropic_api_key' }, { value: key });
   }
 
-  /** Get Claude OAuth token */
-  async getClaudeOAuth(): Promise<string | null> {
-    const cred = await this.get({ type: 'claude_oauth' });
-    return cred?.value || null;
-  }
-
-  /** Set Claude OAuth token */
-  async setClaudeOAuth(token: string): Promise<void> {
-    await this.set({ type: 'claude_oauth' }, { value: token });
-  }
-
-  /** Get Claude OAuth credentials (with refresh token and expiry) */
-  async getClaudeOAuthCredentials(): Promise<{
-    accessToken: string;
-    refreshToken?: string;
-    expiresAt?: number;
-  } | null> {
-    const cred = await this.get({ type: 'claude_oauth' });
-    if (!cred) return null;
-
-    return {
-      accessToken: cred.value,
-      refreshToken: cred.refreshToken,
-      expiresAt: cred.expiresAt,
-    };
-  }
-
-  /** Set Claude OAuth credentials (with refresh token and expiry) */
-  async setClaudeOAuthCredentials(credentials: {
-    accessToken: string;
-    refreshToken?: string;
-    expiresAt?: number;
-  }): Promise<void> {
-    await this.set({ type: 'claude_oauth' }, {
-      value: credentials.accessToken,
-      refreshToken: credentials.refreshToken,
-      expiresAt: credentials.expiresAt,
-    });
-  }
-
-  /** Get Claude Code OAuth token */
-  async getClaudeCodeOAuth(): Promise<string | null> {
-    const cred = await this.get({ type: 'craft_oauth' });
-    return cred?.value || null;
-  }
-
-  /** Set Claude Code OAuth token */
-  async setClaudeCodeOAuth(token: string): Promise<void> {
-    await this.set({ type: 'craft_oauth' }, { value: token });
-  }
-
   /** Get workspace OAuth credentials */
   async getWorkspaceOAuth(
     workspaceId: string

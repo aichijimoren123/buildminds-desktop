@@ -43,7 +43,7 @@ apps/electron/
 │   │   ├── menu.ts                # Application menu (File, Edit, View, Help)
 │   │   ├── sessions.ts            # Session management, ClaudeCodeAgent integration
 │   │   ├── onboarding.ts          # Onboarding IPC handlers
-│   │   ├── deep-link.ts           # Deep link URL parsing (ai-agent://)
+│   │   ├── deep-link.ts           # Deep link URL parsing (claudecode://)
 │   │   ├── auto-update.ts         # Auto-update functionality
 │   │   ├── window-manager.ts      # Window state management
 │   │   └── logger.ts              # Electron logging
@@ -198,7 +198,7 @@ Simple web app for viewing exported sessions.
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd ai-agent
+cd claude-code-desktop
 
 # Install dependencies
 bun install
@@ -341,12 +341,23 @@ Configuration is stored at `~/.claude-code-desktop/`:
 ├── credentials.enc          # Encrypted credentials (AES-256-GCM)
 ├── preferences.json         # User preferences
 ├── theme.json               # App-level theme
+├── docs/                    # Bundled documentation
+│   ├── sources.md           # Source integration docs
+│   ├── agents.md            # Agent system docs
+│   ├── permissions.md       # Permission system docs
+│   └── source-guides/       # Per-service guides (gmail.com.md, etc.)
+├── permissions/             # Default permission configs
+│   └── default.json         # App-level default permissions
+├── themes/                  # Custom themes directory
 └── workspaces/
     └── {id}/
         ├── config.json      # Workspace settings
         ├── theme.json       # Workspace theme override
+        ├── permissions.json # Workspace permission overrides
         ├── sessions/        # Session data (JSONL)
         ├── sources/         # Connected sources
+        │   └── {slug}/
+        │       └── permissions.json  # Per-source permissions
         ├── skills/          # Custom skills
         └── statuses/        # Status configuration
 ```
@@ -359,6 +370,8 @@ Configuration is stored at `~/.claude-code-desktop/`:
 | `CLAUDE_CODE_VITE_PORT` | Override Vite dev server port (default: 5173) |
 | `CLAUDE_CODE_APP_NAME` | Override app display name |
 | `CLAUDE_CODE_DEEPLINK_SCHEME` | Override deep link scheme (default: claudecode) |
+| `CLAUDE_CODE_DEBUG` | Enable debug logging (set to `1`) |
+| `CLAUDE_CODE_LOCAL_MCP_ENABLED` | Enable/disable local MCP servers per workspace |
 | `ANTHROPIC_API_KEY` | Anthropic API key |
 | `ANTHROPIC_BASE_URL` | Custom API base URL |
 

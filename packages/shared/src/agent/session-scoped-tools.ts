@@ -46,7 +46,6 @@ import {
 } from '../mcp/validation.ts';
 import {
   getAnthropicApiKey,
-  getClaudeOAuthToken,
 } from '../config/storage.ts';
 import {
   loadSourceConfig,

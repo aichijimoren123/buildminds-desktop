@@ -163,14 +163,6 @@ export async function getAnthropicApiKey(): Promise<string | null> {
   return manager.getApiKey();
 }
 
-/**
- * Get the Claude OAuth token from credential store
- */
-export async function getClaudeOAuthToken(): Promise<string | null> {
-  const manager = getCredentialManager();
-  return manager.getClaudeOAuth();
-}
-
 
 
 export function saveConfig(config: StoredConfig): void {

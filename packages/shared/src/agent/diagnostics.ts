@@ -5,7 +5,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { getLastApiError } from '../network-interceptor.ts';
-import { getAnthropicApiKey, getClaudeOAuthToken, getApiBaseUrl, type AuthType } from '../config/storage.ts';
+import { getAnthropicApiKey, getApiBaseUrl, type AuthType } from '../config/storage.ts';
 
 export type DiagnosticCode =
   | 'billing_error'         // HTTP 402 from Anthropic API
@@ -249,26 +249,6 @@ async function checkApiKey(): Promise<CheckResult> {
   }
 }
 
-/** Check OAuth token presence */
-async function checkOAuthToken(): Promise<CheckResult> {
-  try {
-    const token = await getClaudeOAuthToken();
-    if (!token) {
-      return {
-        ok: false,
-        detail: '✗ OAuth token: Not found',
-        failCode: 'invalid_credentials',
-        failTitle: 'OAuth Token Missing',
-        failMessage: 'Your Claude Max OAuth token is missing. Please re-authenticate.',
-      };
-    }
-    return { ok: true, detail: '✓ OAuth token: Present' };
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    return { ok: true, detail: `✓ OAuth token: Check failed (${msg})` };
-  }
-}
-
 /** Check MCP server connectivity with a quick HEAD request */
 async function checkMcpConnectivity(mcpUrl: string): Promise<CheckResult> {
   try {
@@ -338,15 +318,8 @@ export async function runErrorDiagnostics(config: DiagnosticConfig): Promise<Dia
   // 1. Anthropic API availability check
   checks.push(withTimeout(checkAnthropicAvailability(), 4000, defaultResult));
 
-  // 2. API key check with validation (only for api_key auth)
-  if (authType === 'api_key') {
-    checks.push(withTimeout(checkApiKey(), 5000, defaultResult));
-  }
-
-  // 3. OAuth token check (only for oauth_token auth)
-  if (authType === 'oauth_token') {
-    checks.push(withTimeout(checkOAuthToken(), 5000, defaultResult));
-  }
+  // 2. API key check with validation
+  checks.push(withTimeout(checkApiKey(), 5000, defaultResult));
 
   // Run all checks in parallel
   const results = await Promise.all(checks);

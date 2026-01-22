@@ -1,12 +1,10 @@
 import { cn } from "@/lib/utils"
 import { WelcomeStep } from "./WelcomeStep"
-import { BillingMethodStep, type BillingMethod } from "./BillingMethodStep"
 import { CredentialsStep, type CredentialStatus } from "./CredentialsStep"
 import { CompletionStep } from "./CompletionStep"
 
 export type OnboardingStep =
   | 'welcome'
-  | 'billing-method'
   | 'credentials'
   | 'complete'
 
@@ -17,7 +15,6 @@ export interface OnboardingState {
   loginStatus: LoginStatus
   credentialStatus: CredentialStatus
   completionStatus: 'saving' | 'complete'
-  billingMethod: BillingMethod | null
   isExistingUser: boolean
   errorMessage?: string
 }
@@ -29,21 +26,10 @@ interface OnboardingWizardProps {
   // Event handlers
   onContinue: () => void
   onBack: () => void
-  onSelectBillingMethod: (method: BillingMethod) => void
   onSubmitCredential: (credential: string, baseUrl?: string) => void
   onTestConnection?: (apiKey: string, baseUrl?: string) => Promise<{ success: boolean; error?: string }>
-  onStartOAuth?: () => void
   onSkipCredentials?: () => void  // Skip API configuration
   onFinish: () => void
-
-  // Claude OAuth
-  existingClaudeToken?: string | null
-  isClaudeCliInstalled?: boolean
-  onUseExistingClaudeToken?: () => void
-  // Two-step OAuth flow
-  isWaitingForCode?: boolean
-  onSubmitAuthCode?: (code: string) => void
-  onCancelOAuth?: () => void
 
   className?: string
 }
@@ -51,29 +37,19 @@ interface OnboardingWizardProps {
 /**
  * OnboardingWizard - Full-screen onboarding flow container
  *
- * Manages the step-by-step flow for setting up Craft Agent:
+ * Manages the step-by-step flow for setting up Claude Code Desktop:
  * 1. Welcome
- * 2. Billing Method (choose: API Key / Claude OAuth)
- * 3. Credentials (API Key or Claude OAuth)
- * 4. Completion
+ * 2. Credentials (API Key + optional custom base URL)
+ * 3. Completion
  */
 export function OnboardingWizard({
   state,
   onContinue,
   onBack,
-  onSelectBillingMethod,
   onSubmitCredential,
   onTestConnection,
-  onStartOAuth,
   onSkipCredentials,
   onFinish,
-  existingClaudeToken,
-  isClaudeCliInstalled,
-  onUseExistingClaudeToken,
-  // Two-step OAuth flow
-  isWaitingForCode,
-  onSubmitAuthCode,
-  onCancelOAuth,
   className
 }: OnboardingWizardProps) {
   const renderStep = () => {
@@ -86,33 +62,15 @@ export function OnboardingWizard({
           />
         )
 
-      case 'billing-method':
-        return (
-          <BillingMethodStep
-            selectedMethod={state.billingMethod}
-            onSelect={onSelectBillingMethod}
-            onContinue={onContinue}
-            onBack={onBack}
-          />
-        )
-
       case 'credentials':
         return (
           <CredentialsStep
-            billingMethod={state.billingMethod!}
             status={state.credentialStatus}
             errorMessage={state.errorMessage}
             onSubmit={onSubmitCredential}
             onTestConnection={onTestConnection}
-            onStartOAuth={onStartOAuth}
             onBack={onBack}
             onSkip={onSkipCredentials}
-            existingClaudeToken={existingClaudeToken}
-            isClaudeCliInstalled={isClaudeCliInstalled}
-            onUseExistingClaudeToken={onUseExistingClaudeToken}
-            isWaitingForCode={isWaitingForCode}
-            onSubmitAuthCode={onSubmitAuthCode}
-            onCancelOAuth={onCancelOAuth}
           />
         )
 
