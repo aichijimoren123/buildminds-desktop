@@ -33,7 +33,7 @@ import {
   Plug,
   XCircle,
 } from 'lucide-react'
-import { Spinner } from '@craft-agent/ui'
+import { Spinner } from '@claude-code-desktop/ui'
 import type { AuthType } from '../../../shared/types'
 import type { DetailsPageMeta } from '@/lib/navigation-registry'
 import { type ProviderType, PROVIDER_CONFIGS } from '@claude-code-desktop/core'
@@ -346,6 +346,11 @@ export default function AppSettingsPage() {
   const [isSavingProvider, setIsSavingProvider] = useState(false)
   const [providerTestStatus, setProviderTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle')
   const [providerTestError, setProviderTestError] = useState<string | undefined>()
+  // Provider API Key state (in-place editing)
+  const [providerApiKey, setProviderApiKey] = useState('')
+  const [showProviderApiKey, setShowProviderApiKey] = useState(false)
+  const [isSavingProviderApiKey, setIsSavingProviderApiKey] = useState(false)
+  const [providerApiKeyError, setProviderApiKeyError] = useState<string | undefined>()
 
   // API Key state
   const [apiKeyValue, setApiKeyValue] = useState('')
@@ -617,6 +622,28 @@ export default function AppSettingsPage() {
     }
   }, [provider, customBaseUrl])
 
+  // Save provider API key
+  const handleSaveProviderApiKey = useCallback(async () => {
+    if (!window.electronAPI || !providerApiKey.trim()) return
+
+    setIsSavingProviderApiKey(true)
+    setProviderApiKeyError(undefined)
+
+    try {
+      // Save as API key auth type
+      await window.electronAPI.updateBillingMethod('api_key', providerApiKey.trim())
+      setAuthType('api_key')
+      setHasCredential(true)
+      setProviderApiKey('') // Clear input after save
+      setProviderTestStatus('idle')
+    } catch (error) {
+      console.error('Failed to save API key:', error)
+      setProviderApiKeyError(error instanceof Error ? error.message : 'Failed to save API key')
+    } finally {
+      setIsSavingProviderApiKey(false)
+    }
+  }, [providerApiKey])
+
   // Test provider connection using stored credentials
   const handleTestConnection = useCallback(async () => {
     if (!window.electronAPI?.testProviderConnection) return
@@ -700,7 +727,7 @@ export default function AppSettingsPage() {
             </SettingsSection>
 
             {/* API Provider */}
-            <SettingsSection title="API Provider" description="Configure which API endpoint to use">
+            <SettingsSection title="API Provider" description="Configure your API endpoint and credentials">
               <SettingsCard>
                 <SettingsMenuSelectRow
                   label="Provider"
@@ -757,6 +784,83 @@ export default function AppSettingsPage() {
                     </div>
                   </SettingsRow>
                 )}
+                {/* API Key Input */}
+                <SettingsRow label="API Key">
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          type={showProviderApiKey ? 'text' : 'password'}
+                          value={providerApiKey}
+                          onChange={(e) => {
+                            setProviderApiKey(e.target.value)
+                            setProviderTestStatus('idle')
+                            setProviderTestError(undefined)
+                          }}
+                          placeholder={hasCredential ? '••••••••••••••••' : PROVIDER_CONFIGS[provider].placeholder}
+                          className="pr-10"
+                          disabled={isSavingProviderApiKey}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowProviderApiKey(!showProviderApiKey)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showProviderApiKey ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                        </button>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSaveProviderApiKey}
+                        disabled={isSavingProviderApiKey || !providerApiKey.trim()}
+                      >
+                        {isSavingProviderApiKey ? <Spinner className="size-4" /> : 'Save'}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {provider === 'anthropic' && (
+                        <>
+                          Get your API key from{' '}
+                          <a
+                            href="https://console.anthropic.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-foreground hover:underline"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              window.electronAPI?.openUrl('https://console.anthropic.com')
+                            }}
+                          >
+                            console.anthropic.com
+                          </a>
+                        </>
+                      )}
+                      {provider === 'openrouter' && (
+                        <>
+                          Get your API key from{' '}
+                          <a
+                            href="https://openrouter.ai/keys"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-foreground hover:underline"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              window.electronAPI?.openUrl('https://openrouter.ai/keys')
+                            }}
+                          >
+                            openrouter.ai/keys
+                          </a>
+                        </>
+                      )}
+                      {provider === 'custom' && 'Enter the API key for your custom provider.'}
+                    </p>
+                    {providerApiKeyError && (
+                      <p className="text-sm text-destructive">{providerApiKeyError}</p>
+                    )}
+                  </div>
+                </SettingsRow>
                 {/* Test Connection */}
                 <SettingsRow label="Connection">
                   <div className="flex flex-col gap-2">
@@ -785,7 +889,7 @@ export default function AppSettingsPage() {
                     </div>
                     {!hasCredential && (
                       <p className="text-xs text-muted-foreground">
-                        Configure an API key in Billing settings first.
+                        Enter your API key above to test the connection.
                       </p>
                     )}
                     {providerTestStatus === 'error' && providerTestError && (

@@ -2,7 +2,7 @@ import { Menu, app, shell, BrowserWindow } from 'electron'
 import { IPC_CHANNELS } from '../shared/types'
 import type { WindowManager } from './window-manager'
 import { mainLog } from './logger'
-import { APP_NAME } from '@craft-agent/shared/branding'
+import { APP_NAME } from '@claude-code-desktop/shared/branding'
 
 // Store reference for rebuilding menu
 let cachedWindowManager: WindowManager | null = null

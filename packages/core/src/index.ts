@@ -1,5 +1,5 @@
 /**
- * @craft-agent/core
+ * @claude-code-desktop/core
  *
  * Core types and utilities for Craft Agent.
  *

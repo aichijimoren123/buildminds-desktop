@@ -12,7 +12,7 @@ import * as React from 'react'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { PanelHeader } from '@/components/app-shell/PanelHeader'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Spinner } from '@craft-agent/ui'
+import { Spinner } from '@claude-code-desktop/ui'
 import {
   SettingsSection,
   SettingsCard,

@@ -420,15 +420,15 @@ window.electronAPI.onAgentEvent(callback)
 
 ```typescript
 // Core types
-import type { Workspace, Session, Message } from '@craft-agent/core';
+import type { Workspace, Session, Message } from '@claude-code-desktop/core';
 
 // Shared business logic
-import { CraftAgent } from '@craft-agent/shared/agent';
-import { loadStoredConfig, getApiBaseUrl } from '@craft-agent/shared/config';
-import { getCredentialManager } from '@craft-agent/shared/credentials';
+import { CraftAgent } from '@claude-code-desktop/shared/agent';
+import { loadStoredConfig, getApiBaseUrl } from '@claude-code-desktop/shared/config';
+import { getCredentialManager } from '@claude-code-desktop/shared/credentials';
 
 // UI components
-import { Button, Input } from '@craft-agent/ui';
+import { Button, Input } from '@claude-code-desktop/ui';
 ```
 
 ## File Naming Conventions

@@ -15,9 +15,17 @@ export interface ModelDefinition {
 // ============================================
 
 export const MODELS: ModelDefinition[] = [
-  { id: 'claude-opus-4-5-20251101', name: 'Opus 4.5', shortName: 'Opus', description: 'Most capable' },
-  { id: 'claude-sonnet-4-5-20250929', name: 'Sonnet 4.5', shortName: 'Sonnet', description: 'Balanced' },
-  { id: 'claude-haiku-4-5-20251001', name: 'Haiku 4.5', shortName: 'Haiku', description: 'Fast & efficient' },
+  // Custom provider models (compatible with your API)
+  { id: 'claude-opus-4-5', name: 'Opus 4.5', shortName: 'Opus', description: 'Most capable' },
+  { id: 'claude-opus-4-5-2', name: 'Opus 4.5 v2', shortName: 'Opus v2', description: 'Most capable v2' },
+  { id: 'claude-sonnet-4-5-2', name: 'Sonnet 4.5', shortName: 'Sonnet', description: 'Balanced' },
+  { id: 'claude-haiku-4-5', name: 'Haiku 4.5', shortName: 'Haiku', description: 'Fast & efficient' },
+  { id: 'internal-model', name: 'Internal Model', shortName: 'Internal', description: 'Internal model' },
+  { id: 'internal-model-sonnet-aws', name: 'Sonnet AWS', shortName: 'Sonnet AWS', description: 'Sonnet on AWS' },
+  // Official Anthropic models (keep for compatibility)
+  { id: 'claude-opus-4-5-20251101', name: 'Opus 4.5 (Official)', shortName: 'Opus Official', description: 'Official Anthropic' },
+  { id: 'claude-sonnet-4-5-20250929', name: 'Sonnet 4.5 (Official)', shortName: 'Sonnet Official', description: 'Official Anthropic' },
+  { id: 'claude-haiku-4-5-20251001', name: 'Haiku 4.5 (Official)', shortName: 'Haiku Official', description: 'Official Anthropic' },
 ];
 
 // ============================================
@@ -25,16 +33,16 @@ export const MODELS: ModelDefinition[] = [
 // ============================================
 
 /** Default model for main chat (user-facing) */
-export const DEFAULT_MODEL = 'claude-sonnet-4-5-20250929';
+export const DEFAULT_MODEL = 'claude-sonnet-4-5-2';
 
 /** Model for agent definition extraction (always high quality) */
-export const EXTRACTION_MODEL = 'claude-opus-4-5-20251101';
+export const EXTRACTION_MODEL = 'claude-opus-4-5';
 
 /** Model for API response summarization (cost efficient) */
-export const SUMMARIZATION_MODEL = 'claude-haiku-4-5-20251001';
+export const SUMMARIZATION_MODEL = 'claude-haiku-4-5';
 
 /** Model for instruction updates (high quality for accurate document editing) */
-export const INSTRUCTION_UPDATE_MODEL = 'claude-opus-4-5-20251101';
+export const INSTRUCTION_UPDATE_MODEL = 'claude-opus-4-5';
 
 // ============================================
 // HELPER FUNCTIONS

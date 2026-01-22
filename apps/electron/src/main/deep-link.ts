@@ -29,7 +29,7 @@ import type { BrowserWindow } from 'electron'
 import { mainLog } from './logger'
 import type { WindowManager } from './window-manager'
 import { IPC_CHANNELS } from '../shared/types'
-import { DEEPLINK_SCHEME } from '@craft-agent/shared/branding'
+import { DEEPLINK_SCHEME } from '@claude-code-desktop/shared/branding'
 
 export interface DeepLinkTarget {
   /** Workspace ID - undefined means use active window */

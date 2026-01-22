@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Spinner } from "@craft-agent/ui"
+import { Spinner } from "@claude-code-desktop/ui"
 import { AppSymbol } from "@/components/icons/AppSymbol"
 import { StepFormLayout } from "./primitives"
 

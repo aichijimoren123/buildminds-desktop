@@ -23,10 +23,10 @@
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
-      "@craft-agent/core": ["../core/src/index.ts"],
-      "@craft-agent/core/*": ["../core/src/*"],
-      "@craft-agent/shared": ["./src/index.ts"],
-      "@craft-agent/shared/*": ["./src/*"]
+      "@claude-code-desktop/core": ["../core/src/index.ts"],
+      "@claude-code-desktop/core/*": ["../core/src/*"],
+      "@claude-code-desktop/shared": ["./src/index.ts"],
+      "@claude-code-desktop/shared/*": ["./src/*"]
     }
   },
   "include": ["src/**/*"],

@@ -1,5 +1,5 @@
 /**
- * Context exports for @craft-agent/ui
+ * Context exports for @claude-code-desktop/ui
  */
 
 export {

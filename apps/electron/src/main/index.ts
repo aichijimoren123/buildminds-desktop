@@ -11,12 +11,12 @@ import { registerIpcHandlers } from './ipc'
 import { createApplicationMenu } from './menu'
 import { WindowManager } from './window-manager'
 import { loadWindowState, saveWindowState } from './window-state'
-import { getWorkspaces } from '@craft-agent/shared/config'
-import { initializeDocs } from '@craft-agent/shared/docs'
-import { ensureDefaultPermissions } from '@craft-agent/shared/agent/permissions-config'
+import { getWorkspaces } from '@claude-code-desktop/shared/config'
+import { initializeDocs } from '@claude-code-desktop/shared/docs'
+import { ensureDefaultPermissions } from '@claude-code-desktop/shared/agent/permissions-config'
 import { handleDeepLink } from './deep-link'
 import log, { isDebugMode, mainLog, getLogFilePath } from './logger'
-import { setPerfEnabled, enableDebug } from '@craft-agent/shared/utils'
+import { setPerfEnabled, enableDebug } from '@claude-code-desktop/shared/utils'
 import { initNotificationService, clearBadgeCount, initBadgeIcon, initInstanceBadge } from './notifications'
 import { checkForUpdatesOnLaunch, checkPendingUpdateAndInstall, setWindowManager as setAutoUpdateWindowManager } from './auto-update'
 
@@ -32,7 +32,7 @@ if (isDebugMode) {
 
 // Custom URL scheme for deeplinks (e.g., aiagent://action/new-chat)
 // Supports multi-instance dev: APP_DEEPLINK_SCHEME env var (aiagent1, aiagent2, etc.)
-import { DEEPLINK_SCHEME as DEFAULT_DEEPLINK_SCHEME } from '@craft-agent/shared/branding'
+import { DEEPLINK_SCHEME as DEFAULT_DEEPLINK_SCHEME } from '@claude-code-desktop/shared/branding'
 const DEEPLINK_SCHEME = process.env.APP_DEEPLINK_SCHEME || process.env.CRAFT_DEEPLINK_SCHEME || DEFAULT_DEEPLINK_SCHEME
 
 let windowManager: WindowManager | null = null
@@ -43,7 +43,7 @@ let pendingDeepLink: string | null = null
 
 // Set app name early (before app.whenReady) to ensure correct macOS menu bar title
 // Supports multi-instance dev: APP_NAME env var
-import { APP_NAME as DEFAULT_APP_NAME } from '@craft-agent/shared/branding'
+import { APP_NAME as DEFAULT_APP_NAME } from '@claude-code-desktop/shared/branding'
 app.setName(process.env.APP_NAME || process.env.CRAFT_APP_NAME || DEFAULT_APP_NAME)
 
 // Register as default protocol client for craftagents:// URLs

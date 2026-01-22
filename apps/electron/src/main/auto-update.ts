@@ -20,15 +20,15 @@ import {
   isNewerVersion,
   getPlatformKey,
   getAppVersion,
-} from '@craft-agent/shared/version'
+} from '@claude-code-desktop/shared/version'
 import {
   getDismissedUpdateVersion,
   clearDismissedUpdateVersion,
   getPendingUpdate,
   setPendingUpdate,
   clearPendingUpdate,
-} from '@craft-agent/shared/config'
-import type { VersionManifest, BinaryInfo } from '@craft-agent/shared/version/manifest'
+} from '@claude-code-desktop/shared/config'
+import type { VersionManifest, BinaryInfo } from '@claude-code-desktop/shared/version/manifest'
 import type { UpdateInfo } from '../shared/types'
 import type { WindowManager } from './window-manager'
 

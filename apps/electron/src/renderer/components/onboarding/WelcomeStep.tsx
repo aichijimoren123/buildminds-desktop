@@ -1,6 +1,6 @@
 import { AppSymbol } from "@/components/icons/AppSymbol"
 import { StepFormLayout, ContinueButton } from "./primitives"
-import { APP_NAME } from '@craft-agent/shared/branding'
+import { APP_NAME } from '@claude-code-desktop/shared/branding'
 
 interface WelcomeStepProps {
   onContinue: () => void

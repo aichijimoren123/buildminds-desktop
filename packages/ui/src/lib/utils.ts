@@ -1,5 +1,5 @@
 /**
- * Utility functions for @craft-agent/ui
+ * Utility functions for @claude-code-desktop/ui
  */
 
 import { type ClassValue, clsx } from 'clsx'

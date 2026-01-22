@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { AlertCircle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Spinner } from "@craft-agent/ui"
+import { Spinner } from "@claude-code-desktop/ui"
 import { StepFormLayout } from "./primitives"
-import { APP_NAME } from '@craft-agent/shared/branding'
+import { APP_NAME } from '@claude-code-desktop/shared/branding'
 
 interface ReauthScreenProps {
   onLogin: () => Promise<void>

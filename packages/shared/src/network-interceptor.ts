@@ -129,10 +129,18 @@ function debugLog(...args: unknown[]) {
 
 
 /**
- * Check if URL is Anthropic API
+ * Check if URL is Anthropic API or custom API endpoint
  */
 function isAnthropicMessagesUrl(url: string): boolean {
-  return url.includes('api.anthropic.com') && url.includes('/messages');
+  // Check for official Anthropic API
+  if (url.includes('api.anthropic.com') && url.includes('/messages')) {
+    return true;
+  }
+  // Check for custom base URL (any URL with /messages endpoint)
+  if (url.includes('/messages')) {
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -207,7 +215,8 @@ function addMetadataToMcpTools(body: Record<string, unknown>): Record<string, un
  * Check if URL should have API errors captured
  */
 function shouldCaptureApiErrors(url: string): boolean {
-  return url.includes('api.anthropic.com') && url.includes('/messages');
+  // Capture errors from both official and custom API endpoints
+  return isAnthropicMessagesUrl(url);
 }
 
 const originalFetch = globalThis.fetch.bind(globalThis);
@@ -265,6 +274,10 @@ function toCurl(url: string, init?: RequestInit): string {
 async function logResponse(response: Response, url: string, startTime: number): Promise<Response> {
   const duration = Date.now() - startTime;
 
+  // Always log API responses to console for debugging
+  if (isAnthropicMessagesUrl(url)) {
+    console.error(`[API Response] ${response.status} ${response.statusText} (${duration}ms)`);
+  }
 
   // Capture API errors (runs regardless of DEBUG mode)
   if (shouldCaptureApiErrors(url) && response.status >= 400) {
@@ -358,6 +371,21 @@ async function interceptedFetch(
 
   const startTime = Date.now();
 
+  // Always log API requests to console for debugging
+  if (isAnthropicMessagesUrl(url)) {
+    const method = init?.method?.toUpperCase() ?? 'GET';
+    console.error(`[API Request] ${method} ${url}`);
+    
+    // Log request body summary (without full content)
+    if (init?.body && typeof init.body === 'string') {
+      try {
+        const bodyObj = JSON.parse(init.body);
+        console.error(`[API Request] Model: ${bodyObj.model || 'unknown'}, Messages: ${bodyObj.messages?.length || 0}, Max tokens: ${bodyObj.max_tokens || 'default'}`);
+      } catch {
+        console.error(`[API Request] Body: (failed to parse)`);
+      }
+    }
+  }
 
   // Log all requests as cURL commands
   if (DEBUG) {
