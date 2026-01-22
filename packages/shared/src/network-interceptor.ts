@@ -48,7 +48,7 @@ export interface LastApiError {
 }
 
 // File-based storage for cross-process sharing
-const ERROR_FILE = join(homedir(), '.craft-agent', 'api-error.json');
+const ERROR_FILE = join(homedir(), '.claude-code-desktop', 'api-error.json');
 const MAX_ERROR_AGE_MS = 5 * 60 * 1000; // 5 minutes
 
 function getStoredError(): LastApiError | null {

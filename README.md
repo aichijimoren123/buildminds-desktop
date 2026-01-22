@@ -104,7 +104,7 @@ claude-code-desktop/
     ├── core/                  # Shared types
     ├── shared/                # Business logic
     │   └── src/
-    │       ├── agent/         # CraftAgent, permissions
+    │       ├── agent/         # ClaudeCodeAgent, permissions
     │       ├── auth/          # OAuth, tokens
     │       ├── config/        # Storage, preferences, themes
     │       ├── credentials/   # AES-256-GCM encrypted storage

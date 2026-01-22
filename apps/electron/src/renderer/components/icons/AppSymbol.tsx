@@ -23,4 +23,4 @@ export function AppSymbol({ className }: AppSymbolProps) {
 }
 
 // Legacy export for backward compatibility
-export { AppSymbol as CraftAgentsSymbol }
+export { AppSymbol as ClaudeCodeSymbol }

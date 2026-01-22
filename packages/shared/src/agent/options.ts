@@ -83,7 +83,7 @@ export function getDefaultOptions(): Partial<Options> {
             ... process.env,
             ... optionsEnv,
             // Propagate debug mode from argv flag OR existing env var
-            CRAFT_DEBUG: (process.argv.includes('--debug') || process.env.CRAFT_DEBUG === '1') ? '1' : '0',
+            CLAUDE_CODE_DEBUG: (process.argv.includes('--debug') || process.env.CLAUDE_CODE_DEBUG === '1') ? '1' : '0',
         }
     };
 }

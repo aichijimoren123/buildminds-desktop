@@ -40,8 +40,8 @@ const SAFE_COMMANDS = new Set([
  * HeadlessRunner executes queries in non-interactive mode.
  *
  * Reuses existing components:
- * - CraftMcpClient for MCP connections
- * - CraftAgent for query execution
+ * - ClaudeCodeMcpClient for MCP connections
+ * - ClaudeCodeAgent for query execution
  *
  * Handles interactions automatically:
  * - Permissions: based on policy (deny-all, allow-safe, allow-all)
@@ -85,7 +85,7 @@ export class HeadlessRunner {
       yield { type: 'status', message: 'Connecting to workspace...' };
       this.workspaceRootPath = this.config.workspace.rootPath;
 
-      // 2. Create CraftAgent with headless callbacks
+      // 2. Create ClaudeCodeAgent with headless callbacks
       this.createAgent();
 
       // 3. Execute query
@@ -185,7 +185,7 @@ ${this.config.prompt}
   }
 
   /**
-   * Create CraftAgent with headless callbacks for permissions and questions.
+   * Create ClaudeCodeAgent with headless callbacks for permissions and questions.
    */
   private createAgent(): void {
     // Map permission policy to the new PermissionMode system

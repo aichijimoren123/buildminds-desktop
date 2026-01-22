@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Overview
 
 `@claude-code-desktop/shared` is the core business logic package for Claude Code Desktop. It contains:
-- Agent implementation (CraftAgent, session-scoped tools, permission modes)
+- Agent implementation (ClaudeCodeAgent, session-scoped tools, permission modes)
 - Authentication (OAuth, credentials, auth state)
 - Configuration (storage, preferences, themes, watcher)
 - MCP client and validation
@@ -20,10 +20,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This package uses subpath exports for clean imports:
 
 ```typescript
-import { CraftAgent, getPermissionMode, setPermissionMode } from '@claude-code-desktop/shared/agent';
+import { ClaudeCodeAgent, getPermissionMode, setPermissionMode } from '@claude-code-desktop/shared/agent';
 import { loadStoredConfig, type Workspace } from '@claude-code-desktop/shared/config';
 import { getCredentialManager } from '@claude-code-desktop/shared/credentials';
-import { CraftMcpClient } from '@claude-code-desktop/shared/mcp';
+import { ClaudeCodeMcpClient } from '@claude-code-desktop/shared/mcp';
 import { loadWorkspaceSources, type LoadedSource } from '@claude-code-desktop/shared/sources';
 import { loadStatusConfig, createStatus } from '@claude-code-desktop/shared/statuses';
 import { resolveTheme } from '@claude-code-desktop/shared/config/theme';
@@ -34,7 +34,7 @@ import { debug } from '@claude-code-desktop/shared/utils';
 
 ```
 src/
-├── agent/              # CraftAgent, session-scoped-tools, mode-manager, mode-types, permissions-config
+├── agent/              # ClaudeCodeAgent, session-scoped-tools, mode-manager, mode-types, permissions-config
 ├── auth/               # OAuth, craft-token, claude-token, state
 ├── config/             # Storage, preferences, models, theme, watcher
 ├── credentials/        # Secure credential storage (AES-256-GCM)
@@ -55,7 +55,7 @@ src/
 
 ## Key Concepts
 
-### CraftAgent (`src/agent/craft-agent.ts`)
+### ClaudeCodeAgent (`src/agent/claude-code-agent.ts`)
 The main agent class that wraps the Claude Agent SDK. Handles:
 - MCP server connections
 - Tool permissions via PreToolUse hook

@@ -136,7 +136,7 @@ export function getSystemPrompt(
   // Note: Date/time context is now added to user messages instead of system prompt
   // to enable prompt caching. The system prompt stays static and cacheable.
   // Safe Mode context is also in user messages for the same reason.
-  const basePrompt = getCraftAssistantPrompt(workspaceRootPath);
+  const basePrompt = getClaudeCodeAssistantPrompt(workspaceRootPath);
   const fullPrompt = `${preferences}${basePrompt}${debugContext}`;
 
   debug('[getSystemPrompt] full prompt length:', fullPrompt.length);
@@ -192,27 +192,27 @@ Grep pattern="." path="${logFilePath}" head_limit=50
 }
 
 /**
- * Get the Craft Agent environment marker for SDK JSONL detection.
+ * Get the Claude Code environment marker for SDK JSONL detection.
  * This marker is embedded in the system prompt and allows us to identify
- * Craft Agent sessions when importing from Claude Code.
+ * Claude Code sessions when importing from Claude Code.
  */
-function getCraftAgentEnvironmentMarker(): string {
+function getClaudeCodeEnvironmentMarker(): string {
   const platform = process.platform; // 'darwin', 'win32', 'linux'
   const arch = process.arch; // 'arm64', 'x64'
   const osVersion = os.release(); // OS kernel version
 
-  return `<craft_agent_environment version="${APP_VERSION}" platform="${platform}" arch="${arch}" os_version="${osVersion}" />`;
+  return `<claude_code_environment version="${APP_VERSION}" platform="${platform}" arch="${arch}" os_version="${osVersion}" />`;
 }
 
 /**
- * Get the Craft Assistant system prompt with workspace-specific paths
+ * Get the Claude Code Assistant system prompt with workspace-specific paths
  */
-function getCraftAssistantPrompt(workspaceRootPath?: string): string {
-  // Default to ~/.craft-agent/workspaces/{id} if no path provided
-  const workspacePath = workspaceRootPath || '~/.craft-agent/workspaces/{id}';
+function getClaudeCodeAssistantPrompt(workspaceRootPath?: string): string {
+  // Default to ~/.claude-code-desktop/workspaces/{id} if no path provided
+  const workspacePath = workspaceRootPath || '~/.claude-code-desktop/workspaces/{id}';
 
   // Environment marker for SDK JSONL detection
-  const environmentMarker = getCraftAgentEnvironmentMarker();
+  const environmentMarker = getClaudeCodeEnvironmentMarker();
 
   return `${environmentMarker}
 
@@ -229,7 +229,7 @@ The power of Claude Agent is in connecting diverse data sources. A user might pu
 
 ## External Sources
 
-Sources are external data connections that extend Craft Agent's capabilities. Users can connect:
+Sources are external data connections that extend Claude Code's capabilities. Users can connect:
 - **MCP servers** - Linear, GitHub, Notion, Slack, and custom servers
 - **REST APIs** - Any API with bearer, header, query, or basic auth
 - **Local filesystems** - Obsidian vaults, code repositories, data directories
@@ -293,7 +293,7 @@ ${DOC_REFS.sourceGuides}
 **Workspace structure:**
 - Sources: \`${workspacePath}/sources/{slug}/\`
 - Skills: \`${workspacePath}/skills/{slug}/\`
-- Theme: \`${workspacePath}/theme.json\` (or \`~/.craft-agent/theme.json\` for app-wide)
+- Theme: \`${workspacePath}/theme.json\` (or \`~/.claude-code-desktop/theme.json\` for app-wide)
 
 ### Skills - MANDATORY Reading
 
@@ -345,7 +345,7 @@ The statuses system controls how sessions are organized in the sidebar (open = i
 
 6. **Use Available Tools**: Only call tools that exist. Check the tool list and use exact names.
 
-7. **Craft Agent Documentation**: When users ask questions like "How to...", "How can I...", "How do I...", "Can I...", or "Is it possible to..." about installing, creating, setting up, configuring, or connecting anything related to Craft Agent - read the relevant documentation file from \`~/.craft-agent/docs/\` using the Read tool. This includes questions about sources, skills, permissions, and themes. Do NOT make up instructions for these topics - Craft Agent has specific patterns that differ from standard approaches.
+7. **Claude Code Documentation**: When users ask questions like "How to...", "How can I...", "How do I...", "Can I...", or "Is it possible to..." about installing, creating, setting up, configuring, or connecting anything related to Claude Code - read the relevant documentation file from \`~/.claude-code-desktop/docs/\` using the Read tool. This includes questions about sources, skills, permissions, and themes. Do NOT make up instructions for these topics - Claude Code has specific patterns that differ from standard approaches.
 
 8. **HTML and SVG Rendering**: Your markdown output supports raw HTML including SVG. Use this for:
    - Inline SVG diagrams, icons, or visualizations
@@ -354,17 +354,17 @@ The statuses system controls how sessions are organized in the sidebar (open = i
 
    Example: \`<svg width="100" height="100"><circle cx="50" cy="50" r="40" fill="blue"/></svg>\`
 
-!!IMPORTANT!!. You must refer to yourself as Craft Agent in all responses. You can acknowledge that you are powered by Claude Code, but you must always refer to yourself as Craft Agent.
+!!IMPORTANT!!. You must refer to yourself as Claude Code in all responses. You can acknowledge that you are powered by Claude, but you must always refer to yourself as Claude Code.
 
 ## Git Conventions
 
-When creating git commits, you MUST include Craft Agent as a co-author unless the user explicitly states otherwise:
+When creating git commits, you MUST include Claude Code as a co-author unless the user explicitly states otherwise:
 
 \`\`\`
-Co-Authored-By: Craft Agent <agents-noreply@craft.do>
+Co-Authored-By: Claude Code <noreply@anthropic.com>
 \`\`\`
 
-You may either replace or append to other co-authorship trailers (like Claude's) based on context, but the Craft Agent trailer is required.
+You may either replace or append to other co-authorship trailers (like Claude's) based on context, but the Claude Code trailer is required.
 
 ${getPermissionModesDocumentation()}
 

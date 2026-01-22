@@ -41,7 +41,7 @@ apps/electron/
 │   │   ├── index.ts               # App entry, window creation, deep links
 │   │   ├── ipc.ts                 # IPC handler registration
 │   │   ├── menu.ts                # Application menu (File, Edit, View, Help)
-│   │   ├── sessions.ts            # Session management, CraftAgent integration
+│   │   ├── sessions.ts            # Session management, ClaudeCodeAgent integration
 │   │   ├── onboarding.ts          # Onboarding IPC handlers
 │   │   ├── deep-link.ts           # Deep link URL parsing (ai-agent://)
 │   │   ├── auto-update.ts         # Auto-update functionality
@@ -106,7 +106,7 @@ packages/core/src/
 - `Session` - Conversation scope
 - `Message` - Chat message format
 - `StoredConfig` - Application configuration
-- `AgentEvent` - Events from CraftAgent
+- `AgentEvent` - Events from ClaudeCodeAgent
 
 ### `packages/shared/` - Business Logic
 
@@ -114,8 +114,8 @@ Core business logic for the application.
 
 ```
 packages/shared/src/
-├── agent/                         # CraftAgent, permissions, modes
-│   ├── craft-agent.ts             # Main agent class wrapping Claude Agent SDK
+├── agent/                         # ClaudeCodeAgent, permissions, modes
+│   ├── claude-code-agent.ts       # Main agent class wrapping Claude Agent SDK
 │   ├── mode-manager.ts            # Permission mode management
 │   ├── permissions-config.ts      # Customizable safety rules
 │   └── session-scoped-tools.ts    # Tools available in sessions
@@ -355,10 +355,10 @@ Configuration is stored at `~/.claude-code-desktop/`:
 
 | Variable | Description |
 |----------|-------------|
-| `CRAFT_CONFIG_DIR` | Override config directory |
-| `CRAFT_VITE_PORT` | Override Vite dev server port (default: 5173) |
-| `CRAFT_APP_NAME` | Override app display name |
-| `CRAFT_DEEPLINK_SCHEME` | Override deep link scheme (default: claudecode) |
+| `CLAUDE_CODE_CONFIG_DIR` | Override config directory |
+| `CLAUDE_CODE_VITE_PORT` | Override Vite dev server port (default: 5173) |
+| `CLAUDE_CODE_APP_NAME` | Override app display name |
+| `CLAUDE_CODE_DEEPLINK_SCHEME` | Override deep link scheme (default: claudecode) |
 | `ANTHROPIC_API_KEY` | Anthropic API key |
 | `ANTHROPIC_BASE_URL` | Custom API base URL |
 
@@ -423,7 +423,7 @@ window.electronAPI.onAgentEvent(callback)
 import type { Workspace, Session, Message } from '@claude-code-desktop/core';
 
 // Shared business logic
-import { CraftAgent } from '@claude-code-desktop/shared/agent';
+import { ClaudeCodeAgent } from '@claude-code-desktop/shared/agent';
 import { loadStoredConfig, getApiBaseUrl } from '@claude-code-desktop/shared/config';
 import { getCredentialManager } from '@claude-code-desktop/shared/credentials';
 

@@ -444,7 +444,7 @@ export class SessionManager {
 
   /**
    * Broadcast default permissions changed event to all windows
-   * Triggered when ~/.craft-agent/permissions/default.json changes
+   * Triggered when ~/.claude-code-desktop/permissions/default.json changes
    */
   private broadcastDefaultPermissionsChanged(): void {
     if (!this.windowManager) return
@@ -1245,7 +1245,7 @@ export class SessionManager {
       }
 
       // Note: Credential requests now flow through onAuthRequest (unified auth flow)
-      // The legacy onCredentialRequest callback has been removed from CraftAgent
+      // The legacy onCredentialRequest callback has been removed from ClaudeCodeAgent
 
       // Set up mode change handlers
       managed.agent.onPermissionModeChange = (mode) => {
@@ -2734,7 +2734,7 @@ To view this task's output:
         const PARENT_TOOLS = ['Task', 'TaskOutput']
         const isParentTool = PARENT_TOOLS.includes(event.toolName)
 
-        // Use parentToolUseId from the event - CraftAgent computes this correctly
+        // Use parentToolUseId from the event - ClaudeCodeAgent computes this correctly
         // using the SDK's parent_tool_use_id (authoritative for parallel Tasks)
         // Only fall back to stack heuristic if event doesn't provide parent
         let parentToolUseId: string | undefined
@@ -2742,7 +2742,7 @@ To view this task's output:
           // Parent tools don't have a parent themselves
           parentToolUseId = undefined
         } else if (event.parentToolUseId) {
-          // CraftAgent provided the correct parent from SDK - use it
+          // ClaudeCodeAgent provided the correct parent from SDK - use it
           parentToolUseId = event.parentToolUseId
         } else if (managed.parentToolStack.length > 0) {
           // Fallback: use stack heuristic for edge cases
@@ -3068,7 +3068,7 @@ To view this task's output:
         break
 
       case 'complete':
-        // Complete event from CraftAgent - accumulate usage from this turn
+        // Complete event from ClaudeCodeAgent - accumulate usage from this turn
         // Actual 'complete' sent to renderer comes from the finally block in sendMessage
         if (event.usage) {
           // Initialize tokenUsage if not set

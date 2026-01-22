@@ -1,6 +1,6 @@
 # @claude-code-desktop/core
 
-Shared TypeScript types and utilities for Craft Agent applications.
+Shared TypeScript types and utilities for Claude Code Desktop applications.
 
 ## Installation
 
@@ -54,7 +54,7 @@ import { generateMessageId, debug } from '@claude-code-desktop/core';
 - `MessageRole` - Message type enum
 - `ToolStatus` - Tool execution state
 - `TokenUsage` - Token counts and cost
-- `AgentEvent` - Events from CraftAgent
+- `AgentEvent` - Events from ClaudeCodeAgent
 - `TypedError` - Structured error info
 - `Question` - AskUserQuestion format
 

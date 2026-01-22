@@ -41,4 +41,4 @@ export function AppLogo({ className, showText = true }: AppLogoProps) {
 }
 
 // Legacy export for backward compatibility
-export { AppLogo as CraftAgentsLogo }
+export { AppLogo as ClaudeCodeLogo }

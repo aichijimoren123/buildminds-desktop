@@ -1,20 +1,20 @@
 /**
  * @claude-code-desktop/shared
  *
- * Shared business logic for Craft Agent.
+ * Shared business logic for Claude Code Desktop.
  * Used by the Electron app.
  *
  * Import specific modules via subpath exports:
- *   import { CraftAgent } from '@claude-code-desktop/shared/agent';
+ *   import { ClaudeCodeAgent } from '@claude-code-desktop/shared/agent';
  *   import { loadStoredConfig } from '@claude-code-desktop/shared/config';
  *   import { getCredentialManager } from '@claude-code-desktop/shared/credentials';
- *   import { CraftMcpClient } from '@claude-code-desktop/shared/mcp';
+ *   import { ClaudeCodeMcpClient } from '@claude-code-desktop/shared/mcp';
  *   import { debug } from '@claude-code-desktop/shared/utils';
  *   import { loadSource, createSource, getSourceCredentialManager } from '@claude-code-desktop/shared/sources';
  *   import { createWorkspace, loadWorkspace } from '@claude-code-desktop/shared/workspaces';
  *
  * Available modules:
- *   - agent: CraftAgent SDK wrapper, plan tools
+ *   - agent: ClaudeCodeAgent SDK wrapper, plan tools
  *   - auth: OAuth, token management, auth state
  *   - clients: Craft API client
  *   - config: Storage, models, preferences

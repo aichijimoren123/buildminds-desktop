@@ -45,8 +45,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Lock files from other package managers
 pnpm-lock.yaml
 
-# Craft Agent local data (sessions, credentials, config)
-.craft-agent/
+# Claude Code Desktop local data (sessions, credentials, config)
+.claude-code-desktop/
 
 # SSH keys and secrets
 *.pem
