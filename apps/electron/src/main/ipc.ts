@@ -831,12 +831,7 @@ export function registerIpcHandlers(sessionManager: SessionManager, windowManage
     const authType = getAuthType()
     const manager = getCredentialManager()
 
-    let hasCredential = false
-    if (authType === 'api_key') {
-      hasCredential = !!(await manager.getApiKey())
-    } else if (authType === 'oauth_token') {
-      hasCredential = !!(await manager.getClaudeOAuth())
-    }
+    const hasCredential = !!(await manager.getApiKey())
 
     return { authType, hasCredential }
   })
@@ -845,40 +840,12 @@ export function registerIpcHandlers(sessionManager: SessionManager, windowManage
   ipcMain.handle(IPC_CHANNELS.SETTINGS_UPDATE_BILLING_METHOD, async (_event, authType: AuthType, credential?: string) => {
     const manager = getCredentialManager()
 
-    // Clear old credentials when switching auth types
-    const oldAuthType = getAuthType()
-    if (oldAuthType !== authType) {
-      if (oldAuthType === 'api_key') {
-        await manager.delete({ type: 'anthropic_api_key' })
-      } else if (oldAuthType === 'oauth_token') {
-        await manager.delete({ type: 'claude_oauth' })
-      }
-    }
-
-    // Set new auth type
+    // Set auth type (always api_key now)
     setAuthType(authType)
 
     // Store new credential if provided
-    if (credential) {
-      if (authType === 'api_key') {
-        await manager.setApiKey(credential)
-      } else if (authType === 'oauth_token') {
-        // Import full credentials including refresh token and expiry from Claude CLI
-        const { getExistingClaudeCredentials } = await import('@claude-code-desktop/shared/auth')
-        const cliCreds = getExistingClaudeCredentials()
-        if (cliCreds) {
-          await manager.setClaudeOAuthCredentials({
-            accessToken: cliCreds.accessToken,
-            refreshToken: cliCreds.refreshToken,
-            expiresAt: cliCreds.expiresAt,
-          })
-          ipcLog.info('Saved Claude OAuth credentials with refresh token')
-        } else {
-          // Fallback to just saving the access token
-          await manager.setClaudeOAuth(credential)
-          ipcLog.info('Saved Claude OAuth access token only')
-        }
-      }
+    if (credential && authType === 'api_key') {
+      await manager.setApiKey(credential)
     }
 
     ipcLog.info(`Billing method updated to: ${authType}`)
@@ -921,35 +888,16 @@ export function registerIpcHandlers(sessionManager: SessionManager, windowManage
   // Test provider connection using stored credentials
   ipcMain.handle(IPC_CHANNELS.SETTINGS_TEST_PROVIDER_CONNECTION, async () => {
     try {
-      const { getApiBaseUrl, getAuthType } = await import('@claude-code-desktop/shared/config')
+      const { getApiBaseUrl } = await import('@claude-code-desktop/shared/config')
       const manager = getCredentialManager()
 
-      // Get current auth type
-      const authType = getAuthType()
-      ipcLog.info('[TestConnection] Current authType:', authType)
-
-      // Get stored API key or OAuth token
+      // Get stored API key
       const apiKey = await manager.getApiKey()
-      const oauthToken = await manager.getClaudeOAuth()
 
-      ipcLog.info('[TestConnection] Has API key:', !!apiKey, 'Has OAuth token:', !!oauthToken)
+      ipcLog.info('[TestConnection] Has API key:', !!apiKey)
 
-      // Use credential based on authType preference
-      let authToken: string | null = null
-      if (authType === 'api_key' && apiKey) {
-        authToken = apiKey
-        ipcLog.info('[TestConnection] Using API key')
-      } else if (authType === 'oauth_token' && oauthToken) {
-        authToken = oauthToken
-        ipcLog.info('[TestConnection] Using OAuth token')
-      } else {
-        // Fallback: use whichever credential is available
-        authToken = apiKey || oauthToken
-        ipcLog.info('[TestConnection] Using fallback credential')
-      }
-
-      if (!authToken) {
-        return { success: false, error: 'No API key or auth token configured. Please save your API key first.' }
+      if (!apiKey) {
+        return { success: false, error: 'No API key configured. Please save your API key first.' }
       }
 
       const baseUrl = getApiBaseUrl()
@@ -958,10 +906,10 @@ export function registerIpcHandlers(sessionManager: SessionManager, windowManage
       // Test the connection
       const Anthropic = (await import('@anthropic-ai/sdk')).default
       const client = new Anthropic({
-        apiKey: authToken,
+        apiKey,
         ...(baseUrl && { baseURL: baseUrl }),
       })
-      
+
       ipcLog.info('[TestConnection] Calling models.list()...')
       await client.models.list()
 

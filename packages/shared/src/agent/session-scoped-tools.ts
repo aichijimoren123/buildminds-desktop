@@ -1001,18 +1001,16 @@ After creating or editing a source's config.json, run this tool to:
 
             // Get Claude credentials for the validation request
             const claudeApiKey = await getAnthropicApiKey();
-            const claudeOAuthToken = await getClaudeOAuthToken();
 
-            if (!claudeApiKey && !claudeOAuthToken) {
+            if (!claudeApiKey) {
               hasErrors = true;
-              results.push('**❌ Cannot Test MCP**: No Claude API key or OAuth token configured.');
+              results.push('**❌ Cannot Test MCP**: No Claude API key configured.');
             } else {
               // Run the validation
               const mcpResult = await validateMcpConnection({
                 mcpUrl: source.mcp.url,
                 mcpAccessToken,
-                claudeApiKey: claudeApiKey ?? undefined,
-                claudeOAuthToken: claudeOAuthToken ?? undefined,
+                claudeApiKey,
               });
 
               // Update the source's status and timestamp

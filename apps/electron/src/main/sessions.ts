@@ -501,15 +501,9 @@ export class SessionManager {
         sessionLog.info('Using default Anthropic API URL')
       }
 
-      if (billing.type === 'oauth_token' && billing.claudeOAuthToken) {
-        // Use Claude Max subscription via OAuth token
-        process.env.CLAUDE_CODE_OAUTH_TOKEN = billing.claudeOAuthToken
-        delete process.env.ANTHROPIC_API_KEY
-        sessionLog.info('Set Claude Max OAuth Token')
-      } else if (billing.apiKey) {
+      if (billing.apiKey) {
         // Use API key (pay-as-you-go)
         process.env.ANTHROPIC_API_KEY = billing.apiKey
-        delete process.env.CLAUDE_CODE_OAUTH_TOKEN
         sessionLog.info('Set Anthropic API Key')
       } else {
         sessionLog.error('No authentication configured!')

@@ -43,6 +43,7 @@ export interface PendingUpdate {
 // Config stored in JSON file (credentials stored in encrypted file, not here)
 export interface StoredConfig {
   authType?: AuthType;
+  provider?: 'anthropic' | 'openrouter' | 'custom';  // API provider type
   workspaces: Workspace[];
   activeWorkspaceId: string | null;
   activeSessionId: string | null;  // Currently active session (primary scope)
