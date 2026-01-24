@@ -900,6 +900,7 @@ export interface DeepLinkNavigation {
 export type RightSidebarPanel =
   | { type: 'sessionMetadata' }
   | { type: 'files'; path?: string }
+  | { type: 'artifacts' }
   | { type: 'history' }
   | { type: 'none' }
 

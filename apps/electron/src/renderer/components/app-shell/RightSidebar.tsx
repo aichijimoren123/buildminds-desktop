@@ -8,6 +8,7 @@
 import * as React from 'react'
 import type { RightSidebarPanel } from '../../../shared/types'
 import { SessionMetadataPanel } from '../right-sidebar/SessionMetadataPanel'
+import { SessionArtifactsPanel } from '../right-sidebar/SessionArtifactsPanel'
 
 export interface RightSidebarProps {
   /** Current panel configuration */
@@ -25,6 +26,9 @@ export function RightSidebar({ panel, sessionId, closeButton }: RightSidebarProp
   switch (panel.type) {
     case 'sessionMetadata':
       return <SessionMetadataPanel sessionId={sessionId} closeButton={closeButton} />
+
+    case 'artifacts':
+      return <SessionArtifactsPanel sessionId={sessionId} closeButton={closeButton} />
 
     case 'files':
       // TODO: Implement SessionFilesPanel

@@ -565,6 +565,7 @@ export function buildRouteFromNavigationState(state: NavigationState): string {
  * Examples:
  *   'sessionMetadata' -> { type: 'sessionMetadata' }
  *   'history' -> { type: 'history' }
+ *   'artifacts' -> { type: 'artifacts' }
  *   'files' -> { type: 'files' }
  *   'files/src/main.ts' -> { type: 'files', path: 'src/main.ts' }
  *   'none' -> { type: 'none' }
@@ -577,6 +578,9 @@ export function parseRightSidebarParam(sidebarStr?: string): RightSidebarPanel |
   }
   if (sidebarStr === 'history') {
     return { type: 'history' }
+  }
+  if (sidebarStr === 'artifacts') {
+    return { type: 'artifacts' }
   }
   if (sidebarStr.startsWith('files')) {
     const path = sidebarStr.substring(6) // Remove 'files/' prefix
@@ -602,6 +606,8 @@ export function buildRightSidebarParam(panel?: RightSidebarPanel): string | unde
       return 'sessionMetadata'
     case 'history':
       return 'history'
+    case 'artifacts':
+      return 'artifacts'
     case 'files':
       return panel.path ? `files/${panel.path}` : 'files'
     default:
