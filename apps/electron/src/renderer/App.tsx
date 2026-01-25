@@ -42,6 +42,7 @@ import { skillsAtom } from '@/atoms/skills'
 import { extractBadges } from '@/lib/mentions'
 import { getDefaultStore } from 'jotai'
 import { ShikiThemeProvider, PlatformProvider } from '@claude-code-desktop/ui'
+import { Agentation } from 'agentation'
 
 type AppState = 'loading' | 'onboarding' | 'reauth' | 'ready'
 
@@ -1293,6 +1294,7 @@ export default function App() {
         </ModalProvider>
       </FocusProvider>
     </ShikiThemeProvider>
+    {process.env.NODE_ENV === 'development' && <Agentation />}
     </PlatformProvider>
   )
 }

@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { HeaderMenu } from '@/components/ui/HeaderMenu'
 import { useTheme } from '@/context/ThemeContext'
 import { routes } from '@/lib/navigate'
+import * as storage from '@/lib/local-storage'
 import {
   Monitor,
   Sun,
@@ -27,6 +28,8 @@ import {
   CheckCircle2,
   Plug,
   XCircle,
+  PanelLeft,
+  Columns3,
 } from 'lucide-react'
 import { Spinner } from '@claude-code-desktop/ui'
 import type { DetailsPageMeta } from '@/lib/navigation-registry'
@@ -81,6 +84,23 @@ export default function AppSettingsPage() {
 
   // Notifications state
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
+
+  // Layout mode state - uses localStorage directly
+  type LayoutMode = 'separated' | 'integrated'
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(() => {
+    return storage.get(storage.KEYS.layoutMode, 'separated') as LayoutMode
+  })
+
+  // Handler for layout mode change
+  const handleLayoutModeChange = useCallback((mode: LayoutMode) => {
+    setLayoutMode(mode)
+    storage.set(storage.KEYS.layoutMode, mode)
+    // Dispatch storage event so AppShell can react to the change
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: storage.getKeyString(storage.KEYS.layoutMode),
+      newValue: JSON.stringify(mode),
+    }))
+  }, [])
 
   // Auto-update state
   const updateChecker = useUpdateChecker()
@@ -273,6 +293,29 @@ export default function AppSettingsPage() {
                     ]}
                   />
                 </SettingsRow>
+              </SettingsCard>
+            </SettingsSection>
+
+            {/* Layout */}
+            <SettingsSection title="Layout" description="Configure how the app interface is organized">
+              <SettingsCard>
+                <SettingsRow label="Panel layout">
+                  <SettingsSegmentedControl
+                    value={layoutMode}
+                    onValueChange={(v) => handleLayoutModeChange(v as LayoutMode)}
+                    options={[
+                      { value: 'separated', label: 'Separated', icon: <Columns3 className="w-4 h-4" /> },
+                      { value: 'integrated', label: 'Integrated', icon: <PanelLeft className="w-4 h-4" /> },
+                    ]}
+                  />
+                </SettingsRow>
+                <div className="px-4 pb-3 -mt-1">
+                  <p className="text-xs text-muted-foreground">
+                    {layoutMode === 'separated'
+                      ? 'Three-column layout with separate session list panel.'
+                      : 'Two-column layout with sessions integrated into the sidebar.'}
+                  </p>
+                </div>
               </SettingsCard>
             </SettingsSection>
 

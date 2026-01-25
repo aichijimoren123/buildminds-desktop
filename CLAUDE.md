@@ -55,6 +55,7 @@ apps/electron/
 │   │   ├── App.tsx                # Main app component
 │   │   ├── main.tsx               # React entry point
 │   │   ├── components/            # UI components
+│   │   │   ├── app-shell/         # Main app layout (AppShell, LeftSidebar, SidebarSessionList)
 │   │   │   ├── chat/              # Chat UI (ChatInput, ChatDisplay)
 │   │   │   ├── onboarding/        # Onboarding wizard components
 │   │   │   ├── icons/             # App icons (AppLogo, AppSymbol)
@@ -331,6 +332,9 @@ bun run electron:clean:vite
 **SDK path resolution errors:**
 The Claude Agent SDK spawns a subprocess. After bundling, path resolution may break. The app explicitly sets the path in `main/index.ts`.
 
+**Sidebar text truncation not working:**
+If text in the sidebar (especially in integrated mode) overflows instead of truncating with ellipsis, ensure all parent flex/grid containers have `min-w-0`. This is required for the `truncate` class to work properly in nested flex layouts.
+
 ## Configuration
 
 Configuration is stored at `~/.claude-code-desktop/`:
@@ -410,6 +414,55 @@ claudecode://settings
 claudecode://allChats/chat/session123
 claudecode://action/new-chat
 ```
+
+### Layout Modes
+
+The app supports two layout modes, configurable in **Settings > App Settings > Layout**:
+
+| Mode | Description |
+|------|-------------|
+| `separated` | Three-column layout: Sidebar \| Session List \| Chat (default) |
+| `integrated` | Two-column layout: Sidebar with sessions \| Chat |
+
+**Separated Mode:**
+```
+┌────────┬────────────┬────────┐
+│Sidebar │Session List│Chat    │
+│        │            │        │
+│All Chat│ ○ Session1 │        │
+│ Backlog│ ○ Session2 │        │
+│ Todo   │ ○ Session3 │        │
+│Sources │            │        │
+└────────┴────────────┴────────┘
+```
+
+**Integrated Mode:**
+```
+┌─────────────────┬────────────────┐
+│Sidebar+Sessions │Chat            │
+│                 │                │
+│All Chats ▼      │                │
+│ [Filter▼] [🔍]  │                │
+│ ├─ Session1     │                │
+│ ├─ Session2     │                │
+│ └─ Session3     │                │
+│Sources          │                │
+└─────────────────┴────────────────┘
+```
+
+In integrated mode, the "All Chats" sidebar section expands to show:
+- Filter dropdown (All / Backlog / Todo / Done / Flagged / etc.)
+- Search toggle with inline search input
+- Compact scrollable session list with context menus
+
+Implementation files:
+- `local-storage.ts` - Stores `layoutMode` preference
+- `SidebarSessionList.tsx` - Compact session list for integrated mode
+- `LeftSidebar.tsx` - Conditionally renders session list when in integrated mode
+- `AppShell.tsx` - Manages layout mode state and panel visibility
+- `AppSettingsPage.tsx` - UI for switching layout modes
+
+**Important CSS note:** All flex/grid containers in the sidebar hierarchy must have `min-w-0` class to allow proper text truncation. Without this, flex children won't shrink below their content width, causing text overflow instead of truncation.
 
 ### IPC Communication
 

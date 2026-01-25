@@ -14,6 +14,7 @@ export const KEYS = {
   sidebarVisible: 'sidebar-visible',
   sidebarWidth: 'sidebar-width',
   sessionListWidth: 'session-list-width',
+  navigatorVisible: 'navigator-visible', // Navigator panel visibility (2-column vs 3-column)
   sidebarMode: 'sidebar-mode',
   listFilter: 'list-filter',
   expandedFolders: 'expanded-folders',
@@ -36,6 +37,9 @@ export const KEYS = {
 
   // Working directory
   recentWorkingDirs: 'recent-working-dirs',
+
+  // Layout mode
+  layoutMode: 'layout-mode', // 'separated' | 'integrated'
 } as const
 
 export type StorageKey = typeof KEYS[keyof typeof KEYS]

@@ -30,12 +30,18 @@ import SkillInfoPage from '@/pages/SkillInfoPage'
 export interface MainContentPanelProps {
   /** Whether the app is in focused mode (single chat, no sidebar) */
   isFocusedMode?: boolean
+  /** Whether the navigator panel is visible */
+  isNavigatorVisible?: boolean
+  /** Callback to toggle navigator visibility */
+  onToggleNavigator?: () => void
   /** Optional className for the container */
   className?: string
 }
 
 export function MainContentPanel({
   isFocusedMode = false,
+  isNavigatorVisible = true,
+  onToggleNavigator,
   className,
 }: MainContentPanelProps) {
   const navState = useNavigationState()
@@ -134,7 +140,11 @@ export function MainContentPanel({
     if (navState.details) {
       return wrapWithStoplight(
         <Panel variant="grow" className={className}>
-          <ChatPage sessionId={navState.details.sessionId} />
+          <ChatPage
+            sessionId={navState.details.sessionId}
+            isNavigatorVisible={isNavigatorVisible}
+            onToggleNavigator={onToggleNavigator}
+          />
         </Panel>
       )
     }

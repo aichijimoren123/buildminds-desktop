@@ -18,6 +18,8 @@ import {
   DatabaseZap,
   Zap,
   Inbox,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react"
 import { PanelRightRounded } from "../icons/PanelRightRounded"
 import { PanelLeftRounded } from "../icons/PanelLeftRounded"
@@ -189,6 +191,33 @@ function AppShellContent({
   const [sessionListWidth, setSessionListWidth] = React.useState(() => {
     return storage.get(storage.KEYS.sessionListWidth, 300)
   })
+
+  // Navigator panel visibility (2-column vs 3-column layout)
+  const [isNavigatorVisible, setIsNavigatorVisible] = React.useState(() => {
+    return storage.get(storage.KEYS.navigatorVisible, true)
+  })
+
+  // Layout mode: 'separated' (3-column) or 'integrated' (2-column with sessions in sidebar)
+  type LayoutMode = 'separated' | 'integrated'
+  const [layoutMode, setLayoutMode] = React.useState<LayoutMode>(() => {
+    return storage.get(storage.KEYS.layoutMode, 'separated') as LayoutMode
+  })
+
+  // Listen for layout mode changes from settings page
+  React.useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === storage.getKeyString(storage.KEYS.layoutMode) && e.newValue) {
+        try {
+          const newMode = JSON.parse(e.newValue) as LayoutMode
+          setLayoutMode(newMode)
+        } catch {
+          // Ignore parse errors
+        }
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
 
   // Right sidebar state (min 280, max 480)
   const [isRightSidebarVisible, setIsRightSidebarVisible] = React.useState(() => {
@@ -467,6 +496,8 @@ function AppShellContent({
       }, when: () => !document.querySelector('[role="dialog"]') && document.activeElement?.tagName !== 'TEXTAREA' },
       // Sidebar toggle (CMD+\ like VS Code, avoids conflict with CMD+B for bold)
       { key: '\\', cmd: true, action: () => setIsSidebarVisible(v => !v) },
+      // Navigator toggle (CMD+SHIFT+\ to toggle session list panel)
+      { key: '\\', cmd: true, shift: true, action: () => setIsNavigatorVisible(v => !v) },
       // New chat
       { key: 'n', cmd: true, action: () => handleNewChat(true) },
       // Settings
@@ -743,6 +774,16 @@ function AppShellContent({
   React.useEffect(() => {
     storage.set(storage.KEYS.rightSidebarVisible, isRightSidebarVisible)
   }, [isRightSidebarVisible])
+
+  // Persist navigator visibility to localStorage
+  React.useEffect(() => {
+    storage.set(storage.KEYS.navigatorVisible, isNavigatorVisible)
+  }, [isNavigatorVisible])
+
+  // Persist layout mode to localStorage
+  React.useEffect(() => {
+    storage.set(storage.KEYS.layoutMode, layoutMode)
+  }, [layoutMode])
 
   // Persist list filter to localStorage
   React.useEffect(() => {
@@ -1191,6 +1232,43 @@ function AppShellContent({
                       // No context menu for Settings
                     },
                   ]}
+                  // Integrated mode props
+                  layoutMode={layoutMode}
+                  sessions={layoutMode === 'integrated' ? workspaceSessionMetas : undefined}
+                  selectedSessionId={session.selected}
+                  onSessionSelect={layoutMode === 'integrated' ? (meta) => {
+                    // Navigate to the session via central routing
+                    if (!chatFilter || chatFilter.kind === 'allChats') {
+                      navigate(routes.view.allChats(meta.id))
+                    } else if (chatFilter.kind === 'flagged') {
+                      navigate(routes.view.flagged(meta.id))
+                    } else if (chatFilter.kind === 'state') {
+                      navigate(routes.view.state(chatFilter.stateId, meta.id))
+                    }
+                  } : undefined}
+                  sessionActions={layoutMode === 'integrated' ? {
+                    onDelete: handleDeleteSession,
+                    onFlag: onFlagSession,
+                    onUnflag: onUnflagSession,
+                    onTodoStateChange: onTodoStateChange,
+                    onRename: onRenameSession,
+                    onMarkUnread: onMarkSessionUnread,
+                    onOpenInNewWindow: activeWorkspaceId ? (meta) => {
+                      window.electronAPI.openSessionInNewWindow(activeWorkspaceId, meta.id)
+                    } : undefined,
+                  } : undefined}
+                  todoStates={layoutMode === 'integrated' ? todoStates : undefined}
+                  chatFilter={layoutMode === 'integrated' ? (chatFilter ?? { kind: 'allChats' }) : undefined}
+                  onFilterChange={layoutMode === 'integrated' ? (filter) => {
+                    // Navigate to the appropriate route based on filter
+                    if (filter.kind === 'allChats') {
+                      navigate(routes.view.allChats())
+                    } else if (filter.kind === 'flagged') {
+                      navigate(routes.view.flagged())
+                    } else if (filter.kind === 'state') {
+                      navigate(routes.view.state(filter.stateId))
+                    }
+                  } : undefined}
                 />
                 {/* Agent Tree: Hierarchical list of agents */}
                 {/* Agents section removed */}
@@ -1243,10 +1321,19 @@ function AppShellContent({
           className="flex-1 overflow-hidden min-w-0 flex h-full"
           style={{ padding: PANEL_WINDOW_EDGE_SPACING, gap: PANEL_PANEL_SPACING / 2 }}
         >
-          {/* === SESSION LIST PANEL === (hidden in focused mode) */}
-          {!isFocusedMode && (
+          {/* === SESSION LIST PANEL === (hidden in focused mode or integrated mode) */}
+          {!isFocusedMode && layoutMode === 'separated' && (
+          <motion.div
+            initial={false}
+            animate={{
+              width: isNavigatorVisible ? sessionListWidth : 0,
+              opacity: isNavigatorVisible ? 1 : 0,
+            }}
+            transition={isResizing === 'session-list' ? { duration: 0 } : springTransition}
+            className="h-full overflow-hidden shrink-0"
+          >
           <div
-            className="h-full flex flex-col min-w-0 bg-background shrink-0 shadow-middle overflow-hidden rounded-l-[14px] rounded-r-[10px]"
+            className="h-full flex flex-col min-w-0 bg-background shadow-middle overflow-hidden rounded-l-[14px] rounded-r-[10px]"
             style={{ width: sessionListWidth }}
           >
             <PanelHeader
@@ -1254,6 +1341,12 @@ function AppShellContent({
               compensateForStoplight={!isSidebarVisible}
               actions={
                 <>
+                  {/* Collapse navigator button */}
+                  <HeaderIconButton
+                    icon={<PanelLeftClose className="h-4 w-4" />}
+                    onClick={() => setIsNavigatorVisible(false)}
+                    tooltip="收起导航 (⇧⌘\)"
+                  />
                   {/* Filter dropdown - allows filtering by todo states (only in All Chats view) */}
                   {chatFilter?.kind === 'allChats' && (
                     <DropdownMenu>
@@ -1449,10 +1542,11 @@ function AppShellContent({
               </>
             )}
           </div>
+          </motion.div>
           )}
 
-          {/* Session List Resize Handle (hidden in focused mode) */}
-          {!isFocusedMode && (
+          {/* Session List Resize Handle (hidden in focused mode, integrated mode, or when navigator collapsed) */}
+          {!isFocusedMode && layoutMode === 'separated' && isNavigatorVisible && (
           <div
             ref={sessionListHandleRef}
             onMouseDown={(e) => { e.preventDefault(); setIsResizing('session-list') }}
@@ -1478,9 +1572,17 @@ function AppShellContent({
           {/* === MAIN CONTENT PANEL === */}
           <div className={cn(
             "flex-1 overflow-hidden min-w-0 bg-foreground-2 shadow-middle",
-            isFocusedMode ? "rounded-[14px]" : (isRightSidebarVisible ? "rounded-l-[10px] rounded-r-[10px]" : "rounded-l-[10px] rounded-r-[14px]")
+            isFocusedMode ? "rounded-[14px]" : cn(
+              // Left corner: 14px if integrated mode or navigator collapsed, 10px if navigator visible in separated mode
+              layoutMode === 'integrated' ? "rounded-l-[14px]" : (isNavigatorVisible ? "rounded-l-[10px]" : "rounded-l-[14px]"),
+              isRightSidebarVisible ? "rounded-r-[10px]" : "rounded-r-[14px]"
+            )
           )}>
-            <MainContentPanel isFocusedMode={isFocusedMode} />
+            <MainContentPanel
+              isFocusedMode={isFocusedMode}
+              isNavigatorVisible={isNavigatorVisible}
+              onToggleNavigator={() => setIsNavigatorVisible(v => !v)}
+            />
           </div>
 
           {/* Right Sidebar - Inline Mode (≥ 920px) */}

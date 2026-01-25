@@ -12,6 +12,10 @@ import {
 } from '@/components/ui/styled-context-menu'
 import { ContextMenuProvider } from '@/components/ui/menu-context'
 import { SidebarMenu, type SidebarMenuType } from './SidebarMenu'
+import { SidebarSessionList } from './SidebarSessionList'
+import type { SessionMeta } from '@/atoms/sessions'
+import type { TodoState } from '@/config/todo-states'
+import type { ChatFilter } from '../../shared/types'
 
 /** Context menu configuration for sidebar items */
 export interface SidebarContextMenuConfig {
@@ -71,6 +75,32 @@ interface LeftSidebarProps {
   focusedItemId?: string | null
   /** Whether this is a nested sidebar (child of expandable item) */
   isNested?: boolean
+
+  // === Integrated layout mode props ===
+  /** Layout mode - 'separated' shows 3-column, 'integrated' shows 2-column */
+  layoutMode?: 'separated' | 'integrated'
+  /** Sessions to display (only used in integrated mode) */
+  sessions?: SessionMeta[]
+  /** Currently selected session ID (only used in integrated mode) */
+  selectedSessionId?: string | null
+  /** Handler when a session is selected (only used in integrated mode) */
+  onSessionSelect?: (session: SessionMeta) => void
+  /** Session actions (only used in integrated mode) */
+  sessionActions?: {
+    onDelete: (sessionId: string) => Promise<boolean>
+    onFlag: (sessionId: string) => void
+    onUnflag: (sessionId: string) => void
+    onTodoStateChange: (sessionId: string, state: string) => void
+    onRename: (sessionId: string, name: string) => void
+    onMarkUnread: (sessionId: string) => void
+    onOpenInNewWindow?: (session: SessionMeta) => void
+  }
+  /** Todo states for session display (only used in integrated mode) */
+  todoStates?: TodoState[]
+  /** Current chat filter (only used in integrated mode) */
+  chatFilter?: ChatFilter
+  /** Handler when chat filter changes (only used in integrated mode) */
+  onFilterChange?: (filter: ChatFilter) => void
 }
 
 // Stagger animation for child items
@@ -125,7 +155,21 @@ const itemVariants: Variants = {
  * - Children are rendered with animated expand/collapse
  * - Nested items have left indentation with vertical line
  */
-export function LeftSidebar({ links, isCollapsed, getItemProps, focusedItemId, isNested }: LeftSidebarProps) {
+export function LeftSidebar({
+  links,
+  isCollapsed,
+  getItemProps,
+  focusedItemId,
+  isNested,
+  layoutMode = 'separated',
+  sessions,
+  selectedSessionId,
+  onSessionSelect,
+  sessionActions,
+  todoStates,
+  chatFilter,
+  onFilterChange,
+}: LeftSidebarProps) {
   // For nested sidebars, wrap in motion container for stagger effect
   const NavWrapper = isNested ? motion.nav : 'nav'
   const navProps = isNested ? {
@@ -136,10 +180,10 @@ export function LeftSidebar({ links, isCollapsed, getItemProps, focusedItemId, i
   } : {}
 
   return (
-    <div className={cn("flex flex-col select-none", !isNested && "py-1")}>
+    <div className={cn("flex flex-col select-none min-w-0", !isNested && "py-1")}>
       <NavWrapper
         className={cn(
-          "grid gap-0.5",
+          "grid gap-1 min-w-0",
           isNested ? "pl-5 pr-0 relative" : "px-2"
         )}
         role="navigation"
@@ -174,13 +218,14 @@ export function LeftSidebar({ links, isCollapsed, getItemProps, focusedItemId, i
               onClick={link.onClick}
               data-tutorial={link.dataTutorial}
               className={cn(
-                "group flex w-full items-center gap-2 rounded-[6px] py-[5px] text-[13px] select-none outline-none",
+                "group flex w-full items-center gap-2 rounded-lg py-[6px] text-[13px] select-none outline-none",
                 "focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring",
+                "transition-all duration-100",
                 // Same padding for all items
                 "px-2",
                 link.variant === "default"
-                  ? "bg-foreground/[0.07]"
-                  : "hover:bg-foreground/5"
+                  ? "bg-foreground/[0.08] shadow-sm"
+                  : "hover:bg-foreground/[0.05]"
               )}
             >
               {/* Icon container with hover toggle for expandable items */}
@@ -222,11 +267,14 @@ export function LeftSidebar({ links, isCollapsed, getItemProps, focusedItemId, i
           )
 
           // Inner content: button and expandable children
+          // In integrated mode, "All Chats" shows SidebarSessionList instead of status subitems
+          const isAllChatsInIntegratedMode = layoutMode === 'integrated' && link.id === 'nav:allChats'
+
           const innerContent = (
             <>
               {buttonElement}
               {/* Expandable subitems with animation */}
-              {link.expandable && link.items && (
+              {link.expandable && (
                 <AnimatePresence initial={false}>
                   {link.expanded && (
                     <motion.div
@@ -234,15 +282,35 @@ export function LeftSidebar({ links, isCollapsed, getItemProps, focusedItemId, i
                       animate={{ height: 'auto', opacity: 1, marginTop: 2, marginBottom: 8 }}
                       exit={{ height: 0, opacity: 0, marginTop: 0, marginBottom: 0 }}
                       transition={{ duration: 0.2, ease: 'easeInOut' }}
-                      className="overflow-hidden"
+                      className="overflow-hidden min-w-0"
                     >
-                      <LeftSidebar
-                        isCollapsed={false}
-                        isNested={true}
-                        getItemProps={getItemProps}
-                        focusedItemId={focusedItemId}
-                        links={link.items}
-                      />
+                      {isAllChatsInIntegratedMode && sessions && sessionActions && todoStates && chatFilter && onFilterChange && onSessionSelect ? (
+                        // Integrated mode: show compact session list
+                        <SidebarSessionList
+                          sessions={sessions}
+                          selectedSessionId={selectedSessionId ?? null}
+                          onSessionSelect={onSessionSelect}
+                          onSessionDelete={sessionActions.onDelete}
+                          onSessionFlag={sessionActions.onFlag}
+                          onSessionUnflag={sessionActions.onUnflag}
+                          onTodoStateChange={sessionActions.onTodoStateChange}
+                          onRename={sessionActions.onRename}
+                          onMarkUnread={sessionActions.onMarkUnread}
+                          onOpenInNewWindow={sessionActions.onOpenInNewWindow}
+                          todoStates={todoStates}
+                          filter={chatFilter}
+                          onFilterChange={onFilterChange}
+                        />
+                      ) : link.items ? (
+                        // Separated mode: show nested status items
+                        <LeftSidebar
+                          isCollapsed={false}
+                          isNested={true}
+                          getItemProps={getItemProps}
+                          focusedItemId={focusedItemId}
+                          links={link.items}
+                        />
+                      ) : null}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -255,7 +323,7 @@ export function LeftSidebar({ links, isCollapsed, getItemProps, focusedItemId, i
           const content = link.contextMenu ? (
             <ContextMenu modal={true}>
               <ContextMenuTrigger asChild>
-                <div className="group/section">
+                <div className="group/section min-w-0">
                   {innerContent}
                 </div>
               </ContextMenuTrigger>
@@ -272,14 +340,14 @@ export function LeftSidebar({ links, isCollapsed, getItemProps, focusedItemId, i
               </StyledContextMenuContent>
             </ContextMenu>
           ) : (
-            <div className="group/section">
+            <div className="group/section min-w-0">
               {innerContent}
             </div>
           )
 
           // For nested items, wrap in motion.div for stagger animation
           return isNested ? (
-            <motion.div key={link.id} variants={itemVariants}>
+            <motion.div key={link.id} variants={itemVariants} className="min-w-0">
               {content}
             </motion.div>
           ) : (
